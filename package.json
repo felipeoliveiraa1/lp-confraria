@@ -1,0 +1,15 @@
+{
+  "name": "lp-confraria-astro",
+  "type": "module",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "generate": "node tools/fetch-missing.mjs && node tools/build-lp.mjs"
+  },
+  "dependencies": {
+    "astro": "^5.7.0"
+  }
+}

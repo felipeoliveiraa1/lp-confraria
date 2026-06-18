@@ -1,0 +1,19 @@
+node_modules/
+dist/
+.astro/
+.vercel/
+.DS_Store
+*.log
+
+# original WP snapshot — source for `npm run generate` only, kept locally.
+# Excluded from the repo: ~13MB of VSL video chunks + capture-session tracking
+# beacons, and not needed to build/deploy (src/pages + public/assets are enough).
+lp03.confrariadodolar.com.br_al_bio/
+
+# local QA / debug artifacts (Playwright screenshots, fingerprints)
+.playwright-mcp/
+*.jpeg
+live-fp.json
+mine-fp.json
+live-mob.json
+mine-mob.json

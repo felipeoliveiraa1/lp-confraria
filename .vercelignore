@@ -1,0 +1,6 @@
+# Source snapshot used only to (re)generate the page locally — not needed to deploy.
+lp03.confrariadodolar.com.br_al_bio/
+tools/
+*.jpeg
+.playwright-mcp/
+node_modules/
