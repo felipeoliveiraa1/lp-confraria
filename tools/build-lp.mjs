@@ -183,6 +183,18 @@ html = html.replace(/class="([^"]*\be-con\b[^"]*)"/g, (m, cls) =>
   cls.includes('e-lazyloaded') ? m : `class="${cls} e-lazyloaded"`);
 
 // ---------------------------------------------------------------------------
+// 5d. GTM <noscript> fallback. The head gtm.js snippet is present, but the
+//     snapshot lacked the no-JS iframe that normally sits right after <body>.
+//     Add it so the GTM install is complete (container GTM-TXZ8KFR7).
+// ---------------------------------------------------------------------------
+const GTM_NOSCRIPT =
+  '<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TXZ8KFR7" ' +
+  'height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>';
+if (!html.includes('googletagmanager.com/ns.html')) {
+  html = html.replace(/(<body[^>]*>)/i, '$1' + GTM_NOSCRIPT);
+}
+
+// ---------------------------------------------------------------------------
 // 6. Write the page.
 // ---------------------------------------------------------------------------
 writeFileSync(OUT_PAGE, html);
