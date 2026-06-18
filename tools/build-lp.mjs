@@ -85,6 +85,16 @@ removeScriptsContaining([
 // which 404s off WordPress/Cloudflare. Pure wasted request — drop it.
 removeScriptsContaining(['data-cf-beacon', 'cloudflareinsights']);
 
+// Tracking weight cleanup (no data loss):
+//  - The snapshot hard-coded two FB pixel CONFIG loaders (~130KB each) pinned to
+//    domain=lp03… — fbevents.js fetches the right config for the live domain by
+//    itself when fbq('init') runs, so these are redundant AND stale. Drop them.
+//  - fbevents.js was included twice; keep one.
+html = html.replace(/<script\b[^>]*connect\.facebook\.net\/signals\/config\/[^>]*><\/script>/gi, '');
+let _fbev = 0;
+html = html.replace(/<script\b[^>]*connect\.facebook\.net\/en_US\/fbevents\.js[^>]*><\/script>/gi,
+  (m) => (++_fbev > 1 ? '' : m));
+
 // Open connections to the third-party origins the page hits during load
 // (VSL stream, Pixel, GTM, fonts) as early as possible — pure speed, no visual
 // change. The original dns-prefetch hints were dropped in cleanup; re-add the
@@ -97,6 +107,10 @@ const PRECONNECTS = [
   '<link rel="preconnect" href="https://www.googletagmanager.com">',
   '<link rel="preconnect" href="https://fonts.googleapis.com">',
   '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>',
+  // Preload the brand font so headings/body paint in the right face from the
+  // first frame — avoids the swap reflow that was driving CLS up to 0.46.
+  '<link rel="preload" as="font" type="font/woff2" crossorigin href="/assets/wpup_2026-06-InstrumentSansCondensed-Regular.woff2">',
+  '<link rel="preload" as="font" type="font/woff2" crossorigin href="/assets/wpup_2026-06-InstrumentSansCondensed-SemiBold.woff2">',
 ].join('');
 html = html.replace('<head>', '<head>' + PRECONNECTS);
 
@@ -169,18 +183,95 @@ html = html.replace(/<link\b[^>]*>/gi, (m) => {
 const MOTION_FX_NOT = ':not(.elementor-motion-effects-element-type-background)';
 html = html.split(MOTION_FX_NOT).join('');
 
+// font-display:swap on every @font-face — text paints instantly in a fallback
+// instead of staying invisible ~3s (default block) while the webfont downloads.
+// The brand woff2 are preloaded, so the swap window is tiny. Big FCP win.
+html = html.replace(/font-display\s*:\s*[a-z-]+\s*;?/gi, '');
+html = html.replace(/@font-face\s*\{/gi, '@font-face{font-display:swap;');
+
 // ---------------------------------------------------------------------------
-// 5c. Bake Elementor's container lazy-load flag.
-//     Elementor gates container background-images behind:
+// 5c. Performance: lazy backgrounds + delayed heavy JS (no visual change).
+//     Elementor gates container background-images behind
 //       .e-con.e-parent:nth-of-type(n+4):not(.e-lazyloaded){ background-image:none }
-//     and only adds `.e-lazyloaded` via JS (IntersectionObserver) on scroll. The
-//     section + bonus backgrounds (BONUS-1..6, AUTOMACAO mockups, webinar bg,
-//     garantia bg, ...) stay hidden until then. Adding the class at build time
-//     makes every container background paint immediately — no JS, no flash of
-//     missing images on a static export.
+//     and only paints them once `.e-lazyloaded` is added by JS on scroll. Its own
+//     handler doesn't fire on this static export, so instead of baking the class
+//     on EVERY container (which eager-loads ~1MB of images up front and tanks LCP),
+//     a tiny IntersectionObserver adds it as each container nears the viewport —
+//     above-the-fold paints immediately, the rest stream in on scroll.
+//
+//     The ~1MB of Elementor/jQuery/Swiper footer JS only powers below-the-fold
+//     interactions (carousel, accordion, animations) and secondary PixelYourSite
+//     events — nothing needed for first paint, and the CTAs are plain <a> links.
+//     So those scripts are marked type="text/lazyscript" and replayed (in order)
+//     on first interaction / shortly after load. The Meta Pixel PageView + GTM +
+//     GA stay eager in <head>, untouched — connect-rate tracking is unaffected.
 // ---------------------------------------------------------------------------
-html = html.replace(/class="([^"]*\be-con\b[^"]*)"/g, (m, cls) =>
-  cls.includes('e-lazyloaded') ? m : `class="${cls} e-lazyloaded"`);
+// (a) Elementor/jQuery/Swiper footer bundle -> text/lazyscript (interaction-only).
+const DELAY_ID = /(jquery|elementor|swiper|happy|wp-i18n|wp-hooks|dom-purify|js-cookie|js-tld|pro-elements|hello-theme|pys-js)/i;
+html = html.replace(/<script\b([^>]*)>/gi, (full, attrs) => {
+  const idm = attrs.match(/\bid="([^"]*)"/i);
+  if (!idm || !DELAY_ID.test(idm[1])) return full;
+  let a = /type=/.test(attrs)
+    ? attrs.replace(/type=["'][^"']*["']/i, 'type="text/lazyscript"')
+    : attrs + ' type="text/lazyscript"';
+  return '<script' + a + '>';
+});
+
+// (b) Third-party tracking (~650KB: GTM, GA/gtag, Meta fbevents, CAPI param
+//     builder) -> text/delaytrack. The fbq() stub + dataLayer stay EAGER so
+//     PageView/events queue at parse; these heavy loaders flush the queue once
+//     they run, scheduled right after the page paints (requestIdleCallback) so
+//     they never compete with the hero/LCP for mobile bandwidth. Always fire
+//     (no interaction needed) — connect-rate Pixel stays intact (~1s post-paint).
+const TRACK_SRC = /(googletagmanager\.com\/(gtag|gtm)|connect\.facebook\.net\/en_US\/fbevents|clientParamBuilder)/i;
+html = html.replace(/<script\b([^>]*)>/gi, (full, attrs) => {
+  if (!/\ssrc=/.test(attrs) || !TRACK_SRC.test(attrs)) return full;
+  let a = /type=/.test(attrs)
+    ? attrs.replace(/type=["'][^"']*["']/i, 'type="text/delaytrack"')
+    : attrs + ' type="text/delaytrack"';
+  return '<script' + a + '>';
+});
+// the inline GTM bootstrap (injects gtm.js) — delay it too (single-line snippet)
+html = html.replace(/<script>([^<]*gtm\.start[^<]*)<\/script>/i,
+  '<script type="text/delaytrack">$1</script>');
+
+const PERF_LOADER = `<script>(function(){
+// lazy background-images: add .e-lazyloaded as each container nears the viewport
+var cons=[].slice.call(document.querySelectorAll('.e-con'));
+if('IntersectionObserver' in window){
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){
+    if(e.isIntersecting){e.target.classList.add('e-lazyloaded');io.unobserve(e.target);}});},
+    {rootMargin:'800px 0px'});
+  cons.forEach(function(c){io.observe(c);});
+}else{cons.forEach(function(c){c.classList.add('e-lazyloaded');});}
+// replay a set of held scripts in DOM order (inline run sync, external await load)
+function replay(type){
+  var q=[].slice.call(document.querySelectorAll('script[type="'+type+'"]'));
+  (function next(i){if(i>=q.length)return;var o=q[i],s=document.createElement('script');
+    for(var j=0;j<o.attributes.length;j++){var at=o.attributes[j];if(at.name!=='type')s.setAttribute(at.name,at.value);}
+    s.type='text/javascript';
+    if(o.getAttribute('src')){s.onload=s.onerror=function(){next(i+1);};o.parentNode.replaceChild(s,o);}
+    else{s.text=o.textContent;o.parentNode.replaceChild(s,o);next(i+1);}
+  })(0);
+}
+var tDone=false,mDone=false;
+function loadTrack(){if(tDone)return;tDone=true;replay('text/delaytrack');}
+function loadMain(){if(mDone)return;mDone=true;replay('text/lazyscript');}
+// tracking: as soon as the page is idle after load — always fires (no interaction).
+function schedTrack(){('requestIdleCallback'in window)?requestIdleCallback(loadTrack,{timeout:2500}):setTimeout(loadTrack,1500);}
+if(document.readyState==='complete')schedTrack();else window.addEventListener('load',schedTrack);
+// Elementor interactions: only on first engagement (scroll/touch/move/key/click),
+// which also pulls tracking forward. CTAs are <a> links, FAQ is native <details>.
+function onEngage(){loadTrack();loadMain();}
+['scroll','mousemove','touchstart','pointerdown','keydown','click','wheel']
+  .forEach(function(e){window.addEventListener(e,onEngage,{once:true,passive:true});});
+})();</script>`;
+html = html.replace('</body>', PERF_LOADER + '</body>');
+
+// Lazy-load every <img>: none sit above the fold (the hero is the VSL player +
+// headline text), so only images near the viewport download — the rest stream
+// in on scroll. Cuts ~600KB off the initial load (testimonial carousel + thumbs).
+html = html.replace(/<img\b(?![^>]*\bloading=)/gi, '<img loading="lazy" decoding="async" ');
 
 // ---------------------------------------------------------------------------
 // 5d. GTM <noscript> fallback. The head gtm.js snippet is present, but the
