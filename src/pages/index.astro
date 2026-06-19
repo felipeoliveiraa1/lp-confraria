@@ -57,12 +57,12 @@ const pains = [
   { i: img.at[7], t: 'Todos os meses está no cheque especial.' },
 ];
 const bonus = [
-  { n: 1, t: 'Aplicativo Interativo Da Automação Lucrativa', p: 'R$97', d: 'Sabe aquela história de “precisar de notebook para começar”? Esquece essa baboseira! Agora você ativa, controla e acompanha a Automação Lucrativa direto do seu celular com um clique.', img: A + 'wpup_2026-05-BONUS-1-DESKTOP_resultado12.webp' },
-  { n: 2, t: 'Suporte Individual e Personalizado', p: 'R$247', d: 'Você não vai ficar na mão! Tanto no WhatsApp quanto dentro da Automação você terá um suporte individual para tirar todas as suas dúvidas.', img: A + 'wpup_2026-05-BONUS-2-DESKTOP_resultado12.webp' },
-  { n: 3, t: 'O Manual Das Mesas Proprietárias', p: 'R$197', d: 'Você vai aprender todos os meus atalhos para encontrar as mesas proprietárias que disponibilizam capital para você operar.', img: A + 'wpup_2026-05-BONUS-3-DESKTOP_resultado12.webp' },
-  { n: 4, t: 'O Guia Para Declaração De Lucros', p: 'R$97', d: 'O passo a passo para declarar seus lucros em dólar de forma simples e 100% dentro da lei.', img: A + 'wpup_2026-05-BONUS-4-DESKTOP_resultado12.webp' },
-  { n: 5, t: 'Aula De Alocação De Lucros', p: 'R$97', d: 'Uma estratégia simples, segura e eficaz que poucos brasileiros conhecem para alocar os lucros e multiplicar seu patrimônio em até 7 vezes.', img: A + 'wpup_2026-05-BONUS-5-DESKTOP_resultado12.webp' },
-  { n: 6, t: 'Sociedade Lucrativa', p: 'R$197', d: 'Acesso à comunidade de homens que querem alcançar resultados acima da média e trocar experiências.', img: A + 'wpup_2026-05-BONUS-6-DESKTOP_resultado12.webp' },
+  { n: 1, t: 'Aplicativo Interativo Da Automação Lucrativa', p: 'R$97', d: 'Sabe aquela história de “precisar de notebook para começar”? Esquece essa baboseira! Agora você ativa, controla e acompanha a Automação Lucrativa direto do seu celular com um clique.', img: A + 'wpup_2026-05-BONUS-1-DESKTOP_resultado12.webp', imgMob: A + 'wpup_2026-05-BONUS-1-MOB_resultado12.webp' },
+  { n: 2, t: 'Suporte Individual e Personalizado', p: 'R$247', d: 'Você não vai ficar na mão! Tanto no WhatsApp quanto dentro da Automação você terá um suporte individual para tirar todas as suas dúvidas.', img: A + 'wpup_2026-05-BONUS-2-DESKTOP_resultado12.webp', imgMob: A + 'wpup_2026-05-BONUS-2-MOB_resultado12.webp' },
+  { n: 3, t: 'O Manual Das Mesas Proprietárias', p: 'R$197', d: 'Você vai aprender todos os meus atalhos para encontrar as mesas proprietárias que disponibilizam capital para você operar.', img: A + 'wpup_2026-05-BONUS-3-DESKTOP_resultado12.webp', imgMob: A + 'wpup_2026-05-BONUS-3-MOB_resultado12.webp' },
+  { n: 4, t: 'O Guia Para Declaração De Lucros', p: 'R$97', d: 'O passo a passo para declarar seus lucros em dólar de forma simples e 100% dentro da lei.', img: A + 'wpup_2026-05-BONUS-4-DESKTOP_resultado12.webp', imgMob: A + 'wpup_2026-05-BONUS-4-MOB_resultado12.webp' },
+  { n: 5, t: 'Aula De Alocação De Lucros', p: 'R$97', d: 'Uma estratégia simples, segura e eficaz que poucos brasileiros conhecem para alocar os lucros e multiplicar seu patrimônio em até 7 vezes.', img: A + 'wpup_2026-05-BONUS-5-DESKTOP_resultado12.webp', imgMob: A + 'wpup_2026-05-BONUS-5-MOB_resultado12-1.webp' },
+  { n: 6, t: 'Sociedade Lucrativa', p: 'R$197', d: 'Acesso à comunidade de homens que querem alcançar resultados acima da média e trocar experiências.', img: A + 'wpup_2026-05-BONUS-6-DESKTOP_resultado12.webp', imgMob: A + 'wpup_2026-05-BONUS-6-MOB_resultado12.webp' },
 ];
 const steps = [
   { n: 'PASSO 1', t: 'Configurar a Automação Lucrativa', d: 'Primeiro, vamos configurar a sua automação, passo a passo, para que você possa lucrar sem complicação.' },
@@ -259,7 +259,8 @@ const faq = [
   <section class="section">
     <div class="wrap bonus">
       {bonus.map((b) => (
-        <div class="bonus__card" style={`background-image:url(${b.img})`}>
+        <div class="bonus__card" style={`--bgd:url(${b.img})`}>
+          <img class="bonus__mob-img" src={b.imgMob} alt="" loading="lazy" />
           <div class="txt">
             <p class="tag">Bônus {b.n}:</p>
             <h3>{b.t}</h3>
