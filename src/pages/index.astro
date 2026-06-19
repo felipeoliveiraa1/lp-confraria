@@ -259,8 +259,7 @@ const faq = [
   <section class="section">
     <div class="wrap bonus">
       {bonus.map((b) => (
-        <div class="bonus__card" style={`--bgd:url(${b.img})`}>
-          <img class="bonus__mob-img" src={b.imgMob} alt="" loading="lazy" />
+        <div class="bonus__card" style={`--bgd:url(${b.img});--bgm:url(${b.imgMob})`}>
           <div class="txt">
             <p class="tag">Bônus {b.n}:</p>
             <h3>{b.t}</h3>
