@@ -6,7 +6,9 @@ const {
   poster,
   account = 'c7c1994f-acfe-4862-a800-81af24e8e9fe',
 } = Astro.props;
-const playerScript = `https://scripts.converteai.net/${account}/players/${playerId}/v4/player.js`;
+// o id do ELEMENTO tem prefixo "vid-", mas a URL do player.js usa o id PURO.
+const bareId = playerId.replace(/^vid-/, '');
+const playerScript = `https://scripts.converteai.net/${account}/players/${bareId}/v4/player.js`;
 ---
 <div class="vsl-slot" id="vsl">
   <img class="vsl__poster" src={poster} width="404" height="720" alt="Clique para assistir ao vídeo" fetchpriority="high" decoding="async" />
