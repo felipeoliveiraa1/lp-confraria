@@ -4,15 +4,15 @@
    uppercase headlines. Zero framework — just tokens + small component classes.
    =========================================================================== */
 
-/* ---- fonts (self-hosted, swap so text paints instantly) ---- */
-@font-face{
-  font-family:'Instrument Sans Condensed';font-style:normal;font-weight:400;font-display:swap;
-  src:url('/assets/wpup_2026-06-InstrumentSansCondensed-Regular.woff2') format('woff2');
-}
-@font-face{
-  font-family:'Instrument Sans Condensed';font-style:normal;font-weight:600;font-display:swap;
-  src:url('/assets/wpup_2026-06-InstrumentSansCondensed-SemiBold.woff2') format('woff2');
-}
+/* ---- fonts: Instrument Sans (same family the original uses everywhere) ---- */
+@font-face{font-family:'Instrument Sans';font-style:normal;font-weight:400;font-display:swap;
+  src:url('/assets/InstrumentSans-400.woff2') format('woff2')}
+@font-face{font-family:'Instrument Sans';font-style:normal;font-weight:500;font-display:swap;
+  src:url('/assets/InstrumentSans-500.woff2') format('woff2')}
+@font-face{font-family:'Instrument Sans';font-style:normal;font-weight:600;font-display:swap;
+  src:url('/assets/InstrumentSans-600.woff2') format('woff2')}
+@font-face{font-family:'Instrument Sans';font-style:normal;font-weight:700;font-display:swap;
+  src:url('/assets/InstrumentSans-700.woff2') format('woff2')}
 
 :root{
   --bg:#000;
@@ -26,8 +26,8 @@
   --gray:#c7c7c7;
   --gray-2:#9a9a9a;
   --gray-3:#7a7a7a;
-  --font-head:'Instrument Sans Condensed','Arial Narrow',system-ui,sans-serif;
-  --font-body:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --font-head:'Instrument Sans',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --font-body:'Instrument Sans',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
   --maxw:1080px;
   --narrow:760px;
   --radius:14px;
@@ -52,13 +52,14 @@ a{color:inherit;text-decoration:none}
 .bg-cover{background-size:cover;background-position:center;background-repeat:no-repeat}
 
 /* ---- typography ---- */
-.h-kicker{font-family:var(--font-head);font-weight:600;text-transform:uppercase;letter-spacing:.5px;
+/* headings: Instrument Sans 600, NO forced uppercase (caps come from the copy) */
+.h-kicker{font-family:var(--font-head);font-weight:600;letter-spacing:.3px;
   color:var(--green);font-size:clamp(15px,2.6vw,20px)}
-.h1{font-family:var(--font-head);font-weight:600;text-transform:uppercase;line-height:1.02;
-  font-size:clamp(30px,6.4vw,62px);letter-spacing:-.5px}
-.h2{font-family:var(--font-head);font-weight:600;text-transform:uppercase;line-height:1.05;
-  font-size:clamp(25px,5vw,46px)}
-.h3{font-family:var(--font-head);font-weight:600;text-transform:uppercase;line-height:1.1;
+.h1{font-family:var(--font-head);font-weight:600;line-height:1.05;
+  font-size:clamp(30px,6.4vw,58px);letter-spacing:-.5px}
+.h2{font-family:var(--font-head);font-weight:600;line-height:1.12;
+  font-size:clamp(26px,4.6vw,46px)}
+.h3{font-family:var(--font-head);font-weight:600;line-height:1.18;
   font-size:clamp(20px,3.4vw,30px)}
 .lead{color:var(--gray);font-size:clamp(15px,2.2vw,19px)}
 .muted{color:var(--gray-2)}
@@ -77,9 +78,17 @@ a{color:inherit;text-decoration:none}
 .hero::after{content:"";position:absolute;inset:0;background:
   radial-gradient(60% 55% at 50% 38%,transparent,rgba(0,0,0,.55));pointer-events:none}
 .hero>*{position:relative;z-index:1}
-.hero-title{font-family:var(--font-body);font-weight:800;line-height:1.2;
-  font-size:clamp(25px,4.4vw,45px);letter-spacing:-.4px;max-width:940px;margin:0 auto}
-.hero-sub{color:var(--red);font-weight:700;font-size:clamp(16px,2.7vw,23px);margin-top:20px}
+.hero-title{font-family:var(--font-head);font-weight:500;line-height:1.45;color:#dddddd;
+  font-size:clamp(23px,3.4vw,33px);max-width:920px;margin:0 auto}
+.hero-title .green{font-weight:600}
+.hero-sub{color:var(--red);font-weight:600;font-size:clamp(16px,2.4vw,22px);margin-top:22px}
+.cupom{font-family:var(--font-head);font-weight:600;letter-spacing:1px;font-size:15px;color:#fff}
+/* VSL embed slot — paste the vturb/ConverteAI embed inside #vsl-embed */
+.vsl-slot{max-width:400px;margin:26px auto 0}
+.vsl-slot:empty::before{content:"▶  VSL (cole o embed da vturb aqui)";display:flex;
+  align-items:center;justify-content:center;min-height:230px;border:1px dashed #2a3a2a;
+  border-radius:14px;color:#5d6f5d;font-size:14px;background:rgba(0,0,0,.4)}
+.vsl-slot vturb-smartplayer,.vsl-slot>*{display:block;width:100%}
 
 /* section background image + green glow helpers */
 .has-bg{position:relative;background:center/cover no-repeat}

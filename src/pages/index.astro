@@ -1,6 +1,5 @@
 ---
 import Base from '../layouts/Base.astro';
-import Vsl from '../components/Vsl.astro';
 
 const CHECKOUT = 'https://checkout.payt.com.br/cc074bb1887e88b3e7d9ad747153e157';
 const A = '/assets/';
@@ -92,12 +91,16 @@ const faq = [
         <span class="green">Lucrar R$550 Por Dia</span> No Mercado Mais Lucrativo Do Mundo
       </h1>
       <p class="hero-sub">Nada de investir, <strong>nada de aparecer e nada de arriscar</strong></p>
-      <Vsl />
-      <p class="mt-m" style="font-family:var(--font-head);text-transform:uppercase;letter-spacing:1px;font-weight:600">Cupom liberado</p>
-      <!-- CTA do herói: escondido até o pitch da VSL (revelado pelo player ConverteAI) -->
-      <div class="cta-wrap" id="hero-cta" style="display:none">
-        <a class="btn" href={CHECKOUT}>QUERO TER ACESSO AGORA</a>
-      </div>
+
+      <!-- ===================================================================
+           VSL: cole aqui o embed da vturb / ConverteAI (script + elemento).
+           Ex.: <vturb-smartplayer id="vid-XXXX"></vturb-smartplayer>
+                <script src="https://scripts.converteai.net/.../player.js" async></script>
+           =================================================================== -->
+      <div class="vsl-slot" id="vsl-embed" aria-label="Vídeo de apresentação"></div>
+
+      <p class="cupom mt-m">CUPOM LIBERADO</p>
+      <div class="cta-wrap"><a class="btn" href={CHECKOUT}>QUERO TER ACESSO AGORA</a></div>
     </div>
   </header>
 
