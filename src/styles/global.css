@@ -71,6 +71,23 @@ a{color:inherit;text-decoration:none}
 .grad{background:linear-gradient(90deg,#1eff00,#0a9d2e);-webkit-background-clip:text;
   background-clip:text;color:transparent}
 
+/* ---- hero ---- */
+.hero{position:relative;text-align:center;padding:46px 20px 56px;
+  background:#000 center top/cover no-repeat;overflow:hidden}
+.hero::after{content:"";position:absolute;inset:0;background:
+  radial-gradient(60% 55% at 50% 38%,transparent,rgba(0,0,0,.55));pointer-events:none}
+.hero>*{position:relative;z-index:1}
+.hero-title{font-family:var(--font-body);font-weight:800;line-height:1.2;
+  font-size:clamp(25px,4.4vw,45px);letter-spacing:-.4px;max-width:940px;margin:0 auto}
+.hero-sub{color:var(--red);font-weight:700;font-size:clamp(16px,2.7vw,23px);margin-top:20px}
+
+/* section background image + green glow helpers */
+.has-bg{position:relative;background:center/cover no-repeat}
+.glow-top::before{content:"";position:absolute;left:50%;top:-10%;transform:translateX(-50%);
+  width:120%;height:60%;background:radial-gradient(50% 50% at 50% 50%,rgba(30,255,0,.16),transparent 70%);
+  pointer-events:none;z-index:0}
+.glow-top>*{position:relative;z-index:1}
+
 /* ---- CTA button ---- */
 .btn{
   display:inline-flex;align-items:center;justify-content:center;gap:10px;text-align:center;

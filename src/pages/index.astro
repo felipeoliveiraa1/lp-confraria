@@ -5,6 +5,7 @@ import Vsl from '../components/Vsl.astro';
 const CHECKOUT = 'https://checkout.payt.com.br/cc074bb1887e88b3e7d9ad747153e157';
 const A = '/assets/';
 const img = {
+  heroBg: A + 'da59245d5b9eca2e_AL-FRIO-1_resultado1.webp',
   bgS2: A + '47cd5dd7a6ee45da_bg-s2_resultado12.webp',
   at: [
     A + '1fbcc6fe5a8dd418_IMG-AT-1_resultado1.webp',
@@ -40,6 +41,8 @@ const img = {
   mockupOferta: A + '26ab166ffccc3f53_MOCKUP-OFERTA-AL-1-1.webp',
   selos: A + '898832b786512f24_SELOS-CHECKOUT.svg',
   garantia: A + '1d346509bbd077a2_garantia-7d-2-1.webp',
+  autorBg: A + 'wpup_2026-05-BIO-MATHEUS-OLI-MOV-1.webp',
+  garantiaBg: A + 'wpup_2026-01-bg-garantia.webp',
 };
 const bonus = [
   { n: 1, t: 'Aplicativo Interativo Da Automação Lucrativa', p: 'R$97', d: 'Sabe aquela história de “precisar de notebook para começar”? Esquece essa baboseira! Agora você ativa, controla e acompanha a Automação Lucrativa direto do seu celular com um clique.', img: A + 'wpup_2026-05-BONUS-1-DESKTOP_resultado12.webp' },
@@ -82,19 +85,18 @@ const faq = [
 ---
 <Base>
   <!-- ============ HERO ============ -->
-  <header class="section center" style="padding-top:38px">
+  <header class="hero" style={`background-image:url(${img.heroBg})`}>
     <div class="wrap--narrow">
-      <h1 class="h1">
+      <h1 class="hero-title">
         <span class="green">O Passo a Passo</span> Que Brasileiros Comuns Estão Usando Pra
         <span class="green">Lucrar R$550 Por Dia</span> No Mercado Mais Lucrativo Do Mundo
       </h1>
-      <p class="red mt-s" style="font-family:var(--font-head);text-transform:uppercase;font-size:clamp(16px,3vw,22px)">
-        Nada de investir, <strong>nada de aparecer e nada de arriscar</strong>
-      </p>
+      <p class="hero-sub">Nada de investir, <strong>nada de aparecer e nada de arriscar</strong></p>
       <Vsl />
-      <!-- CTA do herói: escondido até o pitch da VSL (configurar reveal no ConverteAI) -->
+      <p class="mt-m" style="font-family:var(--font-head);text-transform:uppercase;letter-spacing:1px;font-weight:600">Cupom liberado</p>
+      <!-- CTA do herói: escondido até o pitch da VSL (revelado pelo player ConverteAI) -->
       <div class="cta-wrap" id="hero-cta" style="display:none">
-        <a class="btn" href={CHECKOUT}>QUERO GARANTIR MINHA VAGA!<small>Toque aqui e ganhe 20% de desconto</small></a>
+        <a class="btn" href={CHECKOUT}>QUERO TER ACESSO AGORA</a>
       </div>
     </div>
   </header>
@@ -132,7 +134,7 @@ const faq = [
   </section>
 
   <!-- ============ AUTOMAÇÃO LUCRATIVA ============ -->
-  <section class="section center">
+  <section class="section center glow-top">
     <div class="wrap">
       <h2 class="h1">AUTOMAÇÃO <span class="grad">LUCRATIVA</span></h2>
       <img src={img.automacao} alt="Automação Lucrativa" loading="lazy" class="mt-m" style="max-width:880px;margin-inline:auto" />
@@ -270,7 +272,7 @@ const faq = [
   </section>
 
   <!-- ============ AUTOR ============ -->
-  <section class="section">
+  <section class="section has-bg" style={`background-image:linear-gradient(rgba(0,0,0,.5),rgba(0,0,0,.8)),url(${img.autorBg})`}>
     <div class="author">
       <h2 class="h2">Matheus <span class="green">Oliveira</span></h2>
       <p class="lead">É empresário, especialista no mercado forex e criador da Automação Lucrativa.</p>
@@ -279,7 +281,7 @@ const faq = [
   </section>
 
   <!-- ============ GARANTIA ============ -->
-  <section class="section center">
+  <section class="section center has-bg glow-top" style={`background-image:linear-gradient(rgba(0,0,0,.55),rgba(0,0,0,.85)),url(${img.garantiaBg})`}>
     <div class="guarantee">
       <img src={img.garantia} alt="Garantia de 7 dias" loading="lazy" />
       <div>
