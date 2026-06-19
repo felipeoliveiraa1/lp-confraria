@@ -97,6 +97,10 @@ const faq = [
 ];
 ---
 <Base>
+  <!-- gate: esconde botão da hero + tudo abaixo até o play completar 16:35.
+       Roda antes da pintura (sem flash). Sem JS, nada é escondido (fallback). -->
+  <script is:inline>try{if(!localStorage.getItem('al_vsl_revealed'))document.documentElement.classList.add('gated')}catch(e){document.documentElement.classList.add('gated')}</script>
+
   <!-- ============ HERO ============ -->
   <header class="hero" style={`background-image:url(${img.heroBg})`}>
     <div class="wrap--narrow">
@@ -141,16 +145,21 @@ const faq = [
             var s = document.createElement('script');
             s.src = 'https://scripts.converteai.net/c7c1994f-acfe-4862-a800-81af24e8e9fe/players/6a349259a7b4179972eb92a5/v4/player.js';
             s.async = true; document.head.appendChild(s);
+            if (window.__startVslTimer) window.__startVslTimer(); // começa a contagem do reveal no play
           }
           box.addEventListener('click', play, { once: true });
         })();
       </script>
 
-      <p class="cupom mt-m">CUPOM LIBERADO</p>
-      <div class="cta-wrap"><a class="btn" href={CHECKOUT}>QUERO TER ACESSO AGORA</a></div>
+      <div class="gate" id="hero-cta">
+        <p class="cupom mt-m">CUPOM LIBERADO</p>
+        <div class="cta-wrap"><a class="btn" href={CHECKOUT}>QUERO TER ACESSO AGORA</a></div>
+      </div>
     </div>
   </header>
 
+  <!-- tudo abaixo da hero fica escondido até o reveal (16:35 após o play) -->
+  <div class="gate" id="below">
   <!-- ============ ATÉ QUANDO? (celular Nubank + cards de dor) ============ -->
   <section class="quando">
     <div class="quando-inner" style={`background-image:url(${img.bgS2})`}>
@@ -360,4 +369,22 @@ const faq = [
     <p>A Sociedade Trader · Automação Lucrativa</p>
     <p style="margin-top:8px">Este produto não garante a obtenção de resultados. Qualquer referência ao desempenho de uma estratégia não deve ser interpretada como garantia de ganhos.</p>
   </footer>
+  </div><!-- /#below -->
+
+  <!-- reveal timer: 16min35s após o play; uma vez revelado, persiste (não esconde de novo) -->
+  <script is:inline>
+    (function () {
+      var DELAY = (16 * 60 + 35) * 1000; // 16:35 = 995s
+      var KEY = 'al_vsl_revealed', scheduled = false;
+      function reveal() {
+        document.documentElement.classList.remove('gated');
+        try { localStorage.setItem(KEY, '1'); } catch (e) {}
+      }
+      try { if (localStorage.getItem(KEY)) reveal(); } catch (e) {}
+      window.__startVslTimer = function () {
+        if (scheduled) return; scheduled = true;
+        setTimeout(reveal, DELAY);
+      };
+    })();
+  </script>
 </Base>

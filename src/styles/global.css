@@ -14,6 +14,10 @@
 @font-face{font-family:'Instrument Sans';font-style:normal;font-weight:700;font-display:swap;
   src:url('/assets/InstrumentSans-700.woff2') format('woff2')}
 
+/* gate do VSL: esconde botão da hero + conteúdo abaixo até o reveal (16:35 pós-play).
+   Só aplica com a classe .gated no <html> (adicionada via JS) -> sem JS, mostra tudo. */
+html.gated .gate{display:none !important}
+
 :root{
   --bg:#000;
   --bg-soft:#070a07;
