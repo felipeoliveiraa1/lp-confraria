@@ -1,0 +1,32 @@
+---
+// Tap-to-play VSL facade. Shows a poster (the LCP, loads instantly); on tap it
+// injects the ConverteAI player so the heavy player JS stays off the initial load.
+// Swap playerScript / playerId for the real VSL when ready.
+const {
+  poster = '/assets/poster-vsl.webp',
+  playerId = 'vid-6a20c90c21baac62cfa32db9',
+  playerScript = 'https://scripts.converteai.net/c7c1994f-acfe-4862-a800-81af24e8e9fe/ab-test/6a20cbb47a48ed3f3ba46ae5/player.js',
+} = Astro.props;
+---
+<div class="vsl" id="vsl">
+  <img class="vsl__poster" src={poster} alt="Assista ao vídeo" fetchpriority="high" />
+  <div class="vsl__play" id="vsl-play" role="button" aria-label="Reproduzir vídeo">
+    <span><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg></span>
+  </div>
+</div>
+<script is:inline define:vars={{ playerId, playerScript }}>
+(function () {
+  var box = document.getElementById('vsl');
+  if (!box) return;
+  var fired = false;
+  function play() {
+    if (fired) return; fired = true;
+    var el = document.createElement('vturb-smartplayer');
+    el.id = playerId; el.setAttribute('style', 'display:block;width:100%');
+    box.innerHTML = ''; box.appendChild(el);
+    var s = document.createElement('script'); s.src = playerScript; s.async = true;
+    document.head.appendChild(s);
+  }
+  box.addEventListener('click', play, { once: true });
+})();
+</script>

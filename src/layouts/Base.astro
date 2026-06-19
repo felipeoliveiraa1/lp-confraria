@@ -1,0 +1,49 @@
+---
+import '../styles/global.css';
+const { title = 'AL – BIO – A Sociedade Trader' } = Astro.props;
+---
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>{title}</title>
+<meta name="robots" content="max-image-preview:large" />
+
+<!-- open connections early (VSL stream, Pixel, GTM) -->
+<link rel="preconnect" href="https://scripts.converteai.net" crossorigin />
+<link rel="preconnect" href="https://cdn.converteai.net" crossorigin />
+<link rel="preconnect" href="https://images.converteai.net" crossorigin />
+<link rel="preconnect" href="https://connect.facebook.net" crossorigin />
+<link rel="preconnect" href="https://www.googletagmanager.com" />
+<!-- brand font (preloaded so headings paint instantly) -->
+<link rel="preload" as="font" type="font/woff2" crossorigin href="/assets/wpup_2026-06-InstrumentSansCondensed-SemiBold.woff2" />
+<!-- LCP image (VSL poster) -->
+<link rel="preload" as="image" href="/assets/poster-vsl.webp" fetchpriority="high" />
+
+<!-- Meta Pixel: stub is eager so PageView QUEUES immediately; the heavy
+     fbevents/GTM loaders fire on idle/first-interaction (keeps LCP fast,
+     connect-rate Pixel still fires ~1s after paint). -->
+<script is:inline>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[]}(window,document);
+fbq('init','857473790367684');fbq('init','1471336464764734');fbq('track','PageView');
+window.dataLayer=window.dataLayer||[];
+(function(){var done=false;function load(){if(done)return;done=true;
+  var f=document.createElement('script');f.async=true;f.src='https://connect.facebook.net/en_US/fbevents.js';document.head.appendChild(f);
+  window.dataLayer.push({'gtm.start':new Date().getTime(),event:'gtm.start'});
+  var g=document.createElement('script');g.async=true;g.src='https://www.googletagmanager.com/gtm.js?id=GTM-TXZ8KFR7';document.head.appendChild(g);
+}
+// fire on the first engagement (the VSL play tap, a scroll, etc.). The page is
+// already fast, so the Pixel fires the moment the user engages — connect rate
+// stays high while the heavy loaders stay out of the LCP path. A short fallback
+// timer guarantees tracking even if somehow no event fires.
+['scroll','touchstart','mousemove','pointerdown','keydown','click','wheel'].forEach(function(e){addEventListener(e,load,{once:true,passive:true})});
+addEventListener('load',function(){setTimeout(load,6000)});
+})();
+</script>
+</head>
+<body>
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TXZ8KFR7" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<slot />
+</body>
+</html>
