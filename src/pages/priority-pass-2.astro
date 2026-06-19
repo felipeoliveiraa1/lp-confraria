@@ -1,0 +1,19 @@
+---
+import Funnel from '../layouts/Funnel.astro';
+import Vsl from '../components/Vsl.astro';
+import PaytButton from '../components/PaytButton.astro';
+const PAYT = 'https://checkout.payt.com.br/multiple-oneclickbuyscript/LXGYD5.js';
+---
+<Funnel title="PRIORITY PASS 2 – A Sociedade Trader" poster="/assets/poster-priority-pass-2.webp">
+  <div class="scarcity">⚠️ MARQUE SUA CONFIGURAÇÃO BLINDADA</div>
+  <main class="funnel">
+    <div class="funnel-wrap">
+      <p class="funnel-kicker">🛡️ ACESSO PRIORITÁRIO</p>
+      <h1 class="funnel-title">PRIORITY <span class="green">PASS</span></h1>
+      <Vsl playerId="vid-69d80919eae131da62eccc5d" poster="/assets/poster-priority-pass-2.webp" />
+      <PaytButton object="R2QQVL-LXG5X5" label="QUERO ADQUIRIR O PRIORITYPASS" />
+      <a class="decline" href="/priority-pass-downsell/">NÃO QUERO ESSA OFERTA</a>
+    </div>
+  </main>
+  <script is:inline src={PAYT}></script>
+</Funnel>

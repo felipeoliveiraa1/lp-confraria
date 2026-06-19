@@ -1,0 +1,23 @@
+---
+import Funnel from '../layouts/Funnel.astro';
+import Vsl from '../components/Vsl.astro';
+import PaytButton from '../components/PaytButton.astro';
+const PAYT = 'https://checkout.payt.com.br/multiple-oneclickbuyscript/LXGYD5.js';
+---
+<Funnel title="UPSELL 01 PAYT – A Sociedade Trader" poster="/assets/poster-upsell-01.webp">
+  <div class="scarcity">⚠️ IMPORTANTE: ESSA PÁGINA SAIRÁ DO AR EM <span id="cd">15:00</span></div>
+  <main class="funnel">
+    <div class="funnel-wrap">
+      <h1 class="funnel-title">Sua compra ainda<br />não está completa…</h1>
+      <ul class="steps-card">
+        <li><span class="ic">✅</span> Passo 1: Sociedade do Trader</li>
+        <li class="is-now"><span class="ic">⚙️</span> Passo 2: Configuração blindada</li>
+        <li><span class="ic">⏳</span> Passo 3: Compra concluída!</li>
+      </ul>
+      <Vsl playerId="vid-69d808d8eae131da62eccb52" poster="/assets/poster-upsell-01.webp" />
+      <PaytButton object="47BBVL-R2JNEO" label="QUERO GARANTIR A CONFIGURAÇÃO BLINDADA" />
+      <a class="decline" href="/downsell-payt/">NÃO QUERO ESSA OFERTA</a>
+    </div>
+  </main>
+  <script is:inline src={PAYT}></script>
+</Funnel>

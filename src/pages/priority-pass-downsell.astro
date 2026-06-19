@@ -1,0 +1,21 @@
+---
+import Funnel from '../layouts/Funnel.astro';
+import PaytButton from '../components/PaytButton.astro';
+const PAYT = 'https://checkout.payt.com.br/multiple-oneclickbuyscript/LXGYD5.js';
+---
+<Funnel title="PRIORITY PASS DOWNSELL – A Sociedade Trader">
+  <main class="funnel">
+    <div class="funnel-wrap">
+      <p class="funnel-kicker">🛡️ ACESSO VIP</p>
+      <h1 class="funnel-title">SUA CONFIGURAÇÃO NO <span class="green">TOPO DA LISTA</span></h1>
+      <p class="funnel-sub"><strong>Configuração Blindada</strong> é o coração da nossa tecnologia e a demanda está no limite máximo. Mas você não precisa ser “apenas mais um” esperando na fila do nosso servidor.</p>
+      <p class="funnel-sub">Com o <strong>PRIORITY PASS</strong>, você garante o tratamento de elite. Nossa equipe de engenharia vai priorizar o seu setup pessoalmente, garantindo que cada parâmetro de latência e segurança seja calibrado <strong>antes de todo mundo</strong>.</p>
+      <p class="funnel-sub"><strong class="green">⚡ Menos espera, mais precisão, 100% de prioridade.</strong></p>
+      <p class="funnel-sub">Para facilitar sua decisão e colocar você para rodar no <strong>New York Hub</strong> ainda hoje, estou liberando <strong class="green">R$ 50,00 DE DESCONTO</strong>.</p>
+      <p class="funnel-price">De R$ 197,90 por <span class="green">12x de R$ 15,30</span></p>
+      <p class="funnel-sub">Deixe a fila para os amadores. Garanta o seu lugar na via rápida e tenha sua Configuração Blindada ativa em tempo recorde.</p>
+      <PaytButton object="LGXXYR-LQ8BKE" label="QUERO ADQUIRIR COM DESCONTO" />
+    </div>
+  </main>
+  <script is:inline src={PAYT}></script>
+</Funnel>

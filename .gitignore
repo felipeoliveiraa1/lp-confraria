@@ -19,3 +19,6 @@ live-mob.json
 mine-mob.json
 /image.png
 *.png.bak
+
+# capturas WP das páginas de funil (fonte local p/ rebuild)
+paginas-secundarias/

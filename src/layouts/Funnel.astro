@@ -1,0 +1,58 @@
+---
+// Layout das páginas de funil (upsell/downsell). Mesmo design system + tracking
+// da principal, porém enxuto: só pré-carrega o poster da VSL desta página.
+import '../styles/global.css';
+const { title = 'A Sociedade Trader', poster } = Astro.props;
+---
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>{title}</title>
+<meta name="robots" content="noindex,nofollow" />
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+<!-- vturb optimizer: marca o relógio do player o quanto antes -->
+<script is:inline>!function(i,n){i._plt=i._plt||(n&&n.timeOrigin?n.timeOrigin+n.now():Date.now())}(window,performance);</script>
+
+<!-- abre conexões cedo (VSL + Pixel/GTM) -->
+<link rel="preconnect" href="https://scripts.converteai.net" crossorigin />
+<link rel="preconnect" href="https://cdn.converteai.net" crossorigin />
+<link rel="preconnect" href="https://images.converteai.net" crossorigin />
+<link rel="dns-prefetch" href="https://license.vturb.com" />
+<link rel="preconnect" href="https://connect.facebook.net" crossorigin />
+<link rel="preconnect" href="https://www.googletagmanager.com" />
+<!-- fonte da marca -->
+<link rel="preload" as="font" type="font/woff2" crossorigin href="/assets/InstrumentSans-600.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="/assets/InstrumentSans-500.woff2" />
+{poster && <link rel="preload" as="image" href={poster} fetchpriority="high" />}
+
+<!-- Meta Pixel (mesmo da principal): stub enfileira PageView na hora; fbevents/GTM
+     carregam no 1º gesto/idle p/ não pesar o load. -->
+<script is:inline>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[]}(window,document);
+fbq('init','1568602928209590');fbq('track','PageView');
+window.dataLayer=window.dataLayer||[];
+(function(){var done=false;function load(){if(done)return;done=true;
+  var f=document.createElement('script');f.async=true;f.src='https://connect.facebook.net/en_US/fbevents.js';document.head.appendChild(f);
+  window.dataLayer.push({'gtm.start':new Date().getTime(),event:'gtm.start'});
+  var g=document.createElement('script');g.async=true;g.src='https://www.googletagmanager.com/gtm.js?id=GTM-TXZ8KFR7';document.head.appendChild(g);
+}
+['scroll','touchstart','mousemove','pointerdown','keydown','click','wheel'].forEach(function(e){addEventListener(e,load,{once:true,passive:true})});
+addEventListener('load',function(){setTimeout(load,6000)});
+})();
+</script>
+</head>
+<body>
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TXZ8KFR7" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1568602928209590&ev=PageView&noscript=1" alt="" /></noscript>
+<slot />
+<!-- countdown de escassez (roda só se houver #cd; para em 00:00) -->
+<script is:inline>
+  (function(){var el=document.getElementById('cd');if(!el)return;var t=15*60;
+   (function tick(){var m=Math.floor(t/60),s=t%60;el.textContent=m+':'+(s<10?'0':'')+s;
+    if(t>0){t--;setTimeout(tick,1000);}})();})();
+</script>
+</body>
+</html>

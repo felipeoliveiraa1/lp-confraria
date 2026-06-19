@@ -1,32 +1,47 @@
 ---
-// Tap-to-play VSL facade. Shows a poster (the LCP, loads instantly); on tap it
-// injects the ConverteAI player so the heavy player JS stays off the initial load.
-// Swap playerScript / playerId for the real VSL when ready.
+// VSL facade tap-to-play reutilizável (mesmo overlay "CLIQUE PARA OUVIR" da home).
+// Poster real pinta na hora; o player vturb (vídeo pesado) só entra no toque.
 const {
-  poster = '/assets/poster-vsl.webp',
-  playerId = 'vid-6a20c90c21baac62cfa32db9',
-  playerScript = 'https://scripts.converteai.net/c7c1994f-acfe-4862-a800-81af24e8e9fe/ab-test/6a20cbb47a48ed3f3ba46ae5/player.js',
+  playerId,
+  poster,
+  account = 'c7c1994f-acfe-4862-a800-81af24e8e9fe',
 } = Astro.props;
+const playerScript = `https://scripts.converteai.net/${account}/players/${playerId}/v4/player.js`;
 ---
-<div class="vsl" id="vsl">
-  <img class="vsl__poster" src={poster} alt="Assista ao vídeo" fetchpriority="high" />
-  <div class="vsl__play" id="vsl-play" role="button" aria-label="Reproduzir vídeo">
-    <span><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg></span>
-  </div>
+<div class="vsl-slot" id="vsl">
+  <img class="vsl__poster" src={poster} width="404" height="720" alt="Clique para assistir ao vídeo" fetchpriority="high" decoding="async" />
+  <button class="vsl__cta" id="vsl-play" type="button" aria-label="Clique para ouvir o vídeo">
+    <span class="vsl__cta-box">
+      <svg class="vsl__cta-icon" viewBox="0 0 120 100" aria-hidden="true" focusable="false">
+        <g fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 52 60 15 106 52" />
+          <path d="M24 50V88H96V50" />
+          <path d="M84 44V24H92V40" />
+        </g>
+        <circle cx="40" cy="56" r="6.5" fill="#fff" />
+        <rect x="33" y="63" width="13" height="23" rx="6" fill="#fff" />
+        <circle cx="60" cy="60" r="5" fill="#fff" />
+        <rect x="55" y="66" width="10" height="20" rx="5" fill="#fff" />
+        <circle cx="80" cy="56" r="6.5" fill="#fff" />
+        <path d="M80 63 70 86h20z" fill="#fff" />
+      </svg>
+      <span class="vsl__cta-txt">CLIQUE<br />PARA OUVIR</span>
+    </span>
+  </button>
 </div>
 <script is:inline define:vars={{ playerId, playerScript }}>
-(function () {
-  var box = document.getElementById('vsl');
-  if (!box) return;
-  var fired = false;
-  function play() {
-    if (fired) return; fired = true;
-    var el = document.createElement('vturb-smartplayer');
-    el.id = playerId; el.setAttribute('style', 'display:block;width:100%');
-    box.innerHTML = ''; box.appendChild(el);
-    var s = document.createElement('script'); s.src = playerScript; s.async = true;
-    document.head.appendChild(s);
-  }
-  box.addEventListener('click', play, { once: true });
-})();
+  (function () {
+    var box = document.getElementById('vsl'); if (!box) return;
+    var done = false;
+    function play() {
+      if (done) return; done = true;
+      var el = document.createElement('vturb-smartplayer');
+      el.id = playerId;
+      el.setAttribute('style', 'display:block;width:100%;height:100%');
+      box.innerHTML = ''; box.appendChild(el);
+      var s = document.createElement('script');
+      s.src = playerScript; s.async = true; document.head.appendChild(s);
+    }
+    box.addEventListener('click', play, { once: true });
+  })();
 </script>
