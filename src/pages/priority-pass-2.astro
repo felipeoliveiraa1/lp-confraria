@@ -5,15 +5,29 @@ import PaytButton from '../components/PaytButton.astro';
 const PAYT = 'https://checkout.payt.com.br/multiple-oneclickbuyscript/LXGYD5.js';
 ---
 <Funnel title="PRIORITY PASS 2 – A Sociedade Trader" poster="/assets/poster-downsell-payt.webp">
+  <!-- gate: esconde os botões até 0:40 após o play -->
+  <script is:inline>try{if(!localStorage.getItem('al_up02_revealed'))document.documentElement.classList.add('gated')}catch(e){document.documentElement.classList.add('gated')}</script>
   <div class="scarcity">⚠️ MARQUE SUA CONFIGURAÇÃO BLINDADA</div>
   <main class="funnel">
     <div class="funnel-wrap">
       <p class="funnel-kicker">🛡️ ACESSO PRIORITÁRIO</p>
       <h1 class="funnel-title">PRIORITY <span class="green">PASS</span></h1>
       <Vsl playerId="vid-6a3591bae3a27492ce239583" poster="/assets/poster-downsell-payt.webp" />
-      <PaytButton object="4EVO5L-LXG5X5" label="QUERO CONFIGURAR AINDA HOJE." />
-      <a class="decline" href="/priority-pass-downsell/">NÃO QUERO ESSA OFERTA</a>
+      <div class="gate" id="up02-cta">
+        <PaytButton object="4EVO5L-LXG5X5" label="QUERO CONFIGURAR AINDA HOJE." />
+        <a class="decline" href="/priority-pass-downsell/">NÃO QUERO ESSA OFERTA</a>
+      </div>
     </div>
   </main>
   <script is:inline src={PAYT}></script>
+  <!-- reveal timer: 0:40 após o play -->
+  <script is:inline>
+    (function () {
+      var DELAY = 40 * 1000; // 0:40 = 40s
+      var KEY = 'al_up02_revealed', scheduled = false;
+      function reveal() { document.documentElement.classList.remove('gated'); try { localStorage.setItem(KEY, '1'); } catch (e) {} }
+      try { if (localStorage.getItem(KEY)) reveal(); } catch (e) {}
+      window.__startVslTimer = function () { if (scheduled) return; scheduled = true; setTimeout(reveal, DELAY); };
+    })();
+  </script>
 </Funnel>

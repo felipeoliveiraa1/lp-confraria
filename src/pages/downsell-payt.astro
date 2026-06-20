@@ -5,18 +5,32 @@ import PaytButton from '../components/PaytButton.astro';
 const PAYT = 'https://checkout.payt.com.br/multiple-oneclickbuyscript/LXGYD5.js';
 ---
 <Funnel title="DOWNSELL PAYT – A Sociedade Trader" poster="/assets/poster-downsell-payt.webp">
+  <!-- gate: esconde a oferta (copy + botões) até 1:35 após o play -->
+  <script is:inline>try{if(!localStorage.getItem('al_dn01_revealed'))document.documentElement.classList.add('gated')}catch(e){document.documentElement.classList.add('gated')}</script>
   <div class="scarcity">⚠️ IMPORTANTE: ESSA PÁGINA SAIRÁ DO AR EM <span id="cd">15:00</span></div>
   <main class="funnel">
     <div class="funnel-wrap">
       <h1 class="funnel-title">Eu não <span class="green">ACREDITO</span> que você vai obrigar a fazer isso</h1>
       <Vsl playerId="vid-6a3591bae3a27492ce239583" poster="/assets/poster-downsell-payt.webp" />
-      <p class="funnel-sub">Essa será a sua última oportunidade de conseguir ter acesso a <strong>Configuração Blindada</strong>.</p>
-      <p class="funnel-sub">Você já entende que acesso a Configuração Blindada te fará ter ainda mais resultado com menos esforço, né?</p>
-      <p class="funnel-sub">Então, somente aqui e agora você poderá desbloquear o seu acesso com <strong>100 REAIS OFF</strong> de desconto tocando no botão abaixo…</p>
-      <p class="funnel-price">De R$697 por <span class="green">R$597</span>.<small>Você também pode parcelar em até 12x. CORRE antes que saia do ar.</small></p>
-      <PaytButton object="LYGKBL-LGBKW6" label="QUERO GARANTIR COM 100 REAIS DE DESCONTO." />
-      <a class="decline" href="/downsell-2-payt/">NÃO QUERO ESSA OFERTA</a>
+      <div class="gate" id="dn01-cta">
+        <p class="funnel-sub">Essa será a sua última oportunidade de conseguir ter acesso a <strong>Configuração Blindada</strong>.</p>
+        <p class="funnel-sub">Você já entende que acesso a Configuração Blindada te fará ter ainda mais resultado com menos esforço, né?</p>
+        <p class="funnel-sub">Então, somente aqui e agora você poderá desbloquear o seu acesso com <strong>100 REAIS OFF</strong> de desconto tocando no botão abaixo…</p>
+        <p class="funnel-price">De R$697 por <span class="green">R$597</span>.<small>Você também pode parcelar em até 12x. CORRE antes que saia do ar.</small></p>
+        <PaytButton object="LYGKBL-LGBKW6" label="QUERO GARANTIR COM 100 REAIS DE DESCONTO." />
+        <a class="decline" href="/downsell-2-payt/">NÃO QUERO ESSA OFERTA</a>
+      </div>
     </div>
   </main>
   <script is:inline src={PAYT}></script>
+  <!-- reveal timer: 1:35 após o play -->
+  <script is:inline>
+    (function () {
+      var DELAY = 95 * 1000; // 1:35 = 95s
+      var KEY = 'al_dn01_revealed', scheduled = false;
+      function reveal() { document.documentElement.classList.remove('gated'); try { localStorage.setItem(KEY, '1'); } catch (e) {} }
+      try { if (localStorage.getItem(KEY)) reveal(); } catch (e) {}
+      window.__startVslTimer = function () { if (scheduled) return; scheduled = true; setTimeout(reveal, DELAY); };
+    })();
+  </script>
 </Funnel>
