@@ -9,24 +9,10 @@ const { title = 'A Sociedade Trader', poster } = Astro.props;
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<title>{title}</title>
-<meta name="robots" content="noindex,nofollow" />
-<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 
-<!-- vturb optimizer: marca o relógio do player o quanto antes -->
-<script is:inline>!function(i,n){i._plt=i._plt||(n&&n.timeOrigin?n.timeOrigin+n.now():Date.now())}(window,performance);</script>
-
-<!-- abre conexões cedo (VSL + GTM) -->
-<link rel="preconnect" href="https://scripts.converteai.net" crossorigin />
-<link rel="preconnect" href="https://cdn.converteai.net" crossorigin />
-<link rel="preconnect" href="https://images.converteai.net" crossorigin />
-<link rel="dns-prefetch" href="https://license.vturb.com" />
+<!-- GTM PRIMEIRO (foco: disparar o PageView o quanto antes = connect rate). -->
 <link rel="preconnect" href="https://www.googletagmanager.com" />
-<!-- fonte da marca -->
-<link rel="preload" as="font" type="font/woff2" crossorigin href="/assets/InstrumentSans-600.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="/assets/InstrumentSans-500.woff2" />
-{poster && <link rel="preload" as="image" href={poster} fetchpriority="high" />}
-
+<link rel="preload" href="https://www.googletagmanager.com/gtm.js?id=GTM-TXZ8KFR7" as="script" />
 <!-- Google Tag Manager -->
 <script is:inline>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -34,6 +20,23 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
 })(window,document,'script','dataLayer','GTM-TXZ8KFR7');</script>
 <!-- End Google Tag Manager -->
+
+<title>{title}</title>
+<meta name="robots" content="noindex,nofollow" />
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+<!-- vturb optimizer: marca o relógio do player o quanto antes -->
+<script is:inline>!function(i,n){i._plt=i._plt||(n&&n.timeOrigin?n.timeOrigin+n.now():Date.now())}(window,performance);</script>
+
+<!-- abre conexões cedo (VSL) -->
+<link rel="preconnect" href="https://scripts.converteai.net" crossorigin />
+<link rel="preconnect" href="https://cdn.converteai.net" crossorigin />
+<link rel="preconnect" href="https://images.converteai.net" crossorigin />
+<link rel="dns-prefetch" href="https://license.vturb.com" />
+<!-- fonte da marca -->
+<link rel="preload" as="font" type="font/woff2" crossorigin href="/assets/InstrumentSans-600.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="/assets/InstrumentSans-500.woff2" />
+{poster && <link rel="preload" as="image" href={poster} fetchpriority="high" />}
 </head>
 <body>
 <!-- Google Tag Manager (noscript) -->
