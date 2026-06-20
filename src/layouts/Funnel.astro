@@ -10,19 +10,15 @@ const { title = 'A Sociedade Trader', poster } = Astro.props;
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 
+<!-- GTM como 1º script (PageView cedo = connect rate); sem preload de alta
+     prioridade p/ não disputar o LCP. -->
 <link rel="preconnect" href="https://www.googletagmanager.com" />
-<!-- Google Tag Manager — DIFERIDO (dataLayer na hora; gtm.js no 1º gesto ou ~6s
-     após o load) p/ manter a nota alta sem perder o PageView. -->
-<script is:inline>
-window.dataLayer=window.dataLayer||[];
-(function(){var done=false;function load(){if(done)return;done=true;
-  window.dataLayer.push({'gtm.start':new Date().getTime(),event:'gtm.js'});
-  var g=document.createElement('script');g.async=true;g.src='https://www.googletagmanager.com/gtm.js?id=GTM-TXZ8KFR7';document.head.appendChild(g);
-}
-['scroll','touchstart','mousemove','pointerdown','keydown','click','wheel'].forEach(function(e){addEventListener(e,load,{once:true,passive:true})});
-addEventListener('load',function(){setTimeout(load,6000)});
-})();
-</script>
+<!-- Google Tag Manager -->
+<script is:inline>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-TXZ8KFR7');</script>
 <!-- End Google Tag Manager -->
 
 <title>{title}</title>
