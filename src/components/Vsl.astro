@@ -43,6 +43,7 @@ const playerScript = `https://scripts.converteai.net/${account}/players/${bareId
       box.innerHTML = ''; box.appendChild(el);
       var s = document.createElement('script');
       s.src = playerScript; s.async = true; document.head.appendChild(s);
+      if (window.__startVslTimer) window.__startVslTimer(); // começa o gate (se a página tiver)
     }
     box.addEventListener('click', play, { once: true });
   })();
