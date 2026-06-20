@@ -10,9 +10,9 @@ const { title = 'A Sociedade Trader', poster } = Astro.props;
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 
-<!-- GTM PRIMEIRO (foco: disparar o PageView o quanto antes = connect rate). -->
+<!-- GTM como 1º script (PageView cedo = connect rate); sem preload de alta
+     prioridade p/ não disputar o LCP. -->
 <link rel="preconnect" href="https://www.googletagmanager.com" />
-<link rel="preload" href="https://www.googletagmanager.com/gtm.js?id=GTM-TXZ8KFR7" as="script" />
 <!-- Google Tag Manager -->
 <script is:inline>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
