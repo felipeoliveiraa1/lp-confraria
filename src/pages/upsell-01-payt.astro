@@ -1,8 +1,6 @@
 ---
 import Funnel from '../layouts/Funnel.astro';
 import Vsl from '../components/Vsl.astro';
-import PaytButton from '../components/PaytButton.astro';
-const PAYT = 'https://checkout.payt.com.br/multiple-oneclickbuyscript/LXGYD5.js';
 ---
 <Funnel title="UPSELL 01 PAYT – A Sociedade Trader" poster="/assets/poster-upsell-01.webp">
   <!-- gate: esconde os botões até 4:14 após o play. Roda antes da pintura (sem flash);
@@ -19,12 +17,18 @@ const PAYT = 'https://checkout.payt.com.br/multiple-oneclickbuyscript/LXGYD5.js'
       </ul>
       <Vsl playerId="vid-6a3d2078ab74e8fd0f267310" poster="/assets/poster-upsell-01.webp" />
       <div class="gate" id="up01-cta">
-        <PaytButton object="LQO5E4-R2JNEO" label="QUERO GARANTIR MINHA CONFIGURAÇÃO BLINDADA." />
-        <a class="decline" href="/downsell-payt/">NÃO QUERO ESSA OFERTA</a>
+        <button class="accept-btn kirvano-payment-trigger" type="button">QUERO GARANTIR MINHA CONFIGURAÇÃO BLINDADA.</button>
+        <button class="decline kirvano-refuse-trigger" type="button">NÃO QUERO ESSA OFERTA</button>
       </div>
     </div>
   </main>
-  <script is:inline src={PAYT}></script>
+  <!-- Kirvano upsell (funil montado no Kirvano) -->
+  <script is:inline>
+    var offer = "83f13966-2013-4f39-9f31-ff190ec4c5ab";
+    var nextPageURL = "https://lp05.irmandadedodolar.com.br/priority-pass-2/";
+    var refusePageURL = "https://lp05.irmandadedodolar.com.br/priority-pass-downsell/";
+  </script>
+  <script is:inline src="https://snippets.kirvano.com/upsell.min.js"></script>
   <!-- reveal timer: 4:14 após o play. Robusto a 2º plano (Date.now) + ?preview p/ QA. -->
   <script is:inline>
     (function () {

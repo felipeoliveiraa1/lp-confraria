@@ -350,7 +350,7 @@ a{color:inherit;text-decoration:none}
 /* VSL no funil */
 .funnel .vsl-slot{margin:24px auto 0}
 /* botão de aceite (one-click Payt) — verde, pulso suave (só transform) */
-.accept-btn{display:block;width:100%;max-width:440px;margin:26px auto 0;
+.accept-btn{display:block;width:100%;max-width:440px;margin:26px auto 0;border:0;cursor:pointer;
   background:#22c55e;color:#fff;font-family:var(--font-head);font-weight:700;
   font-size:clamp(15px,4.2vw,19px);line-height:1.25;padding:17px 22px;border-radius:32px;
   text-decoration:none;box-shadow:0 10px 30px rgba(34,197,94,.32);
@@ -358,7 +358,7 @@ a{color:inherit;text-decoration:none}
 .accept-btn:hover{animation-play-state:paused;transform:translateZ(0) scale(1.03)}
 @keyframes acPulse{0%,100%{transform:translateZ(0) scale(1)}50%{transform:translateZ(0) scale(1.04)}}
 /* botão de recusa — vermelho preenchido (menos destaque que o verde de aceite) */
-.decline{display:block;width:100%;max-width:420px;margin:16px auto 0;
+.decline{display:block;width:100%;max-width:420px;margin:16px auto 0;border:0;cursor:pointer;
   background:#e11d2a;color:#fff;font-family:var(--font-head);font-weight:700;
   font-size:clamp(14px,3.6vw,16px);line-height:1.25;padding:13px 20px;border-radius:32px;
   text-align:center;text-decoration:none;box-shadow:0 8px 24px rgba(225,29,42,.28)}
