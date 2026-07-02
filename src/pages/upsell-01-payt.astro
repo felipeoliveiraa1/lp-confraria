@@ -32,7 +32,7 @@ import Vsl from '../components/Vsl.astro';
   <!-- reveal timer: 4:14 após o play. Robusto a 2º plano (Date.now) + ?preview p/ QA. -->
   <script is:inline>
     (function () {
-      var DELAY = (4 * 60 + 14) * 1000; // 4:14 = 254s
+      var DELAY = (4 * 60 + 10) * 1000; // 4:10 = 250s
       var KEY = 'al_up01_revealed', started = 0, iv = null;
       function reveal() {
         document.documentElement.classList.remove('gated');

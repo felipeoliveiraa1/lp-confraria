@@ -30,7 +30,7 @@ import Vsl from '../components/Vsl.astro';
   <!-- reveal timer: 1:30 após o play. Robusto a 2º plano (Date.now) + ?preview p/ QA. -->
   <script is:inline>
     (function () {
-      var DELAY = 90 * 1000; // 1:30 = 90s
+      var DELAY = 60 * 1000; // 1:00 = 60s
       var KEY = 'al_dn01_revealed', started = 0, iv = null;
       function reveal() { document.documentElement.classList.remove('gated'); try { localStorage.setItem(KEY, '1'); } catch (e) {} if (iv) { clearInterval(iv); iv = null; } }
       function check() { if (started && Date.now() - started >= DELAY) reveal(); }
