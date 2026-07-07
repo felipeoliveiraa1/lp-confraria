@@ -1,15 +1,13 @@
 ---
 import Base from '../layouts/Base.astro';
-// Versão "aberta": só a primeira dobra (headline + VSL + CTA). SEM gate — CTA visível na hora.
-const CHECKOUT = 'https://pay.kirvano.com/448e308a-ae99-4316-a0d7-3fdff88fd71e';
+// Versão "aberta": só a primeira dobra (headline + VSL). SEM gate, SEM botão.
 ---
 <Base>
   <!-- ============ HERO (aberta, sem gate) ============ -->
   <header class="hero" style="background-image:url(/assets/hero-bg.webp)">
     <div class="wrap--narrow">
       <h1 class="hero-title">
-        O <u class="ul">Passo a Passo</u> Que Brasileiros Comuns Estão Usando Pra
-        <span class="green">Lucrar R$550 Por Dia</span> No Mercado Mais Lucrativo Do Mundo
+        EXISTE UM MÉTODO ONDE O <span class="green">LUCRO VEM ANTES DA TEORIA</span> — E OS RESULTADOS SÃO REAIS
       </h1>
       <p class="hero-sub">Nada de investir, <strong>nada de aparecer e nada de day trade!</strong></p>
 
@@ -52,11 +50,6 @@ const CHECKOUT = 'https://pay.kirvano.com/448e308a-ae99-4316-a0d7-3fdff88fd71e';
           box.addEventListener('click', play, { once: true });
         })();
       </script>
-
-      <div id="hero-cta">
-        <p class="cupom mt-m">CUPOM LIBERADO</p>
-        <div class="cta-wrap"><a class="btn" href={CHECKOUT}>QUERO TER ACESSO AGORA</a></div>
-      </div>
     </div>
   </header>
 </Base>
