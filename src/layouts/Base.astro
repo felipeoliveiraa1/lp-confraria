@@ -20,24 +20,16 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 })(window,document,'script','dataLayer','GTM-TXZ8KFR7');</script>
 <!-- End Google Tag Manager -->
 
-<!-- VK Digital Pixel (sales + page_view) — só na home/principal -->
-<link rel="dns-prefetch" href="https://cf.vkdigital.com.br" />
-<script is:inline>
-!function(w,d,c,u){
-  (w.vkPixelSales=w.vkPixelSales||{_q:[]})._q.push(['init',c]);
-  (w.vkPageViewPixel=w.vkPageViewPixel||{_q:[]})._q.push(['init',c,'page_view']);
-  ['https://cf.vkdigital.com.br/sales_pixel.js?v=56','https://cf.vkdigital.com.br/event_pageview.js'].forEach(function(src,i){
-    var s=d.createElement('script');
-    s.src=src;
-    s.async=1;
-    if(i===0) {
-      s.setAttribute('data-no-xcod-url','');
-    }
-    d.head.appendChild(s);
-  });
-}(window,document,'mZe47LW6iR4rZuYoskrW');
-</script>
-<!-- End VK Digital Pixel -->
+<!-- UTMify (rastreamento de UTMs) -->
+<link rel="dns-prefetch" href="https://cdn.utmify.com.br" />
+<script is:inline
+  src="https://cdn.utmify.com.br/scripts/utms/latest.js"
+  data-utmify-prevent-xcod-sck
+  data-utmify-prevent-subids
+  async
+  defer
+></script>
+<!-- End UTMify -->
 
 <title>{title}</title>
 <meta name="robots" content="max-image-preview:large" />
