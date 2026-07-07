@@ -1,0 +1,62 @@
+---
+import Base from '../layouts/Base.astro';
+// Versão "aberta": só a primeira dobra (headline + VSL + CTA). SEM gate — CTA visível na hora.
+const CHECKOUT = 'https://pay.kirvano.com/448e308a-ae99-4316-a0d7-3fdff88fd71e';
+---
+<Base>
+  <!-- ============ HERO (aberta, sem gate) ============ -->
+  <header class="hero" style="background-image:url(/assets/hero-bg.webp)">
+    <div class="wrap--narrow">
+      <h1 class="hero-title">
+        O <u class="ul">Passo a Passo</u> Que Brasileiros Comuns Estão Usando Pra
+        <span class="green">Lucrar R$550 Por Dia</span> No Mercado Mais Lucrativo Do Mundo
+      </h1>
+      <p class="hero-sub">Nada de investir, <strong>nada de aparecer e nada de day trade!</strong></p>
+
+      <!-- ===== VSL — facade tap-to-play (poster real instantâneo; player vturb só no toque) ===== -->
+      <div class="vsl-slot" id="vsl">
+        <img class="vsl__poster" src="/assets/poster-vsl.webp" width="404" height="720" alt="Clique para assistir ao vídeo" fetchpriority="high" decoding="async" />
+        <button class="vsl__cta" id="vsl-play" type="button" aria-label="Clique para ouvir o vídeo">
+          <span class="vsl__cta-box">
+            <svg class="vsl__cta-icon" viewBox="0 0 120 100" aria-hidden="true" focusable="false">
+              <g fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 52 60 15 106 52" />
+                <path d="M24 50V88H96V50" />
+                <path d="M84 44V24H92V40" />
+              </g>
+              <circle cx="40" cy="56" r="6.5" fill="#fff" />
+              <rect x="33" y="63" width="13" height="23" rx="6" fill="#fff" />
+              <circle cx="60" cy="60" r="5" fill="#fff" />
+              <rect x="55" y="66" width="10" height="20" rx="5" fill="#fff" />
+              <circle cx="80" cy="56" r="6.5" fill="#fff" />
+              <path d="M80 63 70 86h20z" fill="#fff" />
+            </svg>
+            <span class="vsl__cta-txt">CLIQUE<br />PARA OUVIR</span>
+          </span>
+        </button>
+      </div>
+      <script is:inline>
+        (function () {
+          var box = document.getElementById('vsl'); if (!box) return;
+          var done = false;
+          function play() {
+            if (done) return; done = true;
+            var el = document.createElement('vturb-smartplayer');
+            el.id = 'vid-6a3d1ec9ac7ae1f31843b4c4';
+            el.setAttribute('style', 'display:block;width:100%;height:100%');
+            box.innerHTML = ''; box.appendChild(el);
+            var s = document.createElement('script');
+            s.src = 'https://scripts.converteai.net/d9544c5d-ba21-4c7b-aa65-b6663bf5494d/players/6a3d1ec9ac7ae1f31843b4c4/v4/player.js';
+            s.async = true; document.head.appendChild(s);
+          }
+          box.addEventListener('click', play, { once: true });
+        })();
+      </script>
+
+      <div id="hero-cta">
+        <p class="cupom mt-m">CUPOM LIBERADO</p>
+        <div class="cta-wrap"><a class="btn" href={CHECKOUT}>QUERO TER ACESSO AGORA</a></div>
+      </div>
+    </div>
+  </header>
+</Base>
