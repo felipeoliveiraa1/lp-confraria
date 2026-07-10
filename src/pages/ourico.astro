@@ -92,7 +92,7 @@ const PHOTO = '/assets/ourico-matheus.webp';
       font-size:clamp(38px,8vw,74px)}
     .hero-sub{color:var(--muted);font-size:clamp(16px,2.3vw,20px);max-width:60ch;margin:22px auto 0;line-height:1.6}
     .cta-row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:34px}
-    .btn{display:inline-flex;align-items:center;gap:9px;font-weight:600;font-size:16px;padding:15px 26px;border-radius:14px;
+    .btn{display:inline-flex;align-items:center;justify-content:center;text-align:center;gap:9px;font-weight:600;font-size:16px;padding:15px 26px;border-radius:14px;max-width:100%;
       transition:transform .18s ease,box-shadow .18s ease,border-color .18s;will-change:transform}
     .btn--primary{background:var(--grad);color:#04070d;box-shadow:0 10px 34px rgba(59,130,246,.32)}
     .btn--primary:hover{transform:translateY(-2px);box-shadow:0 16px 44px rgba(59,130,246,.45)}
@@ -146,11 +146,12 @@ const PHOTO = '/assets/ourico-matheus.webp';
     .value p{color:var(--muted);font-size:15px;margin-top:10px;max-width:32ch;margin-inline:auto}
 
     /* ---- contato ---- */
-    .contact-card{position:relative;border:1px solid var(--border-2);border-radius:26px;padding:clamp(40px,7vw,72px) 28px;text-align:center;overflow:hidden;
+    .contact-card{position:relative;border:1px solid var(--border-2);border-radius:26px;padding:clamp(40px,7vw,72px) clamp(18px,5vw,28px);text-align:center;overflow:hidden;
       background:radial-gradient(120% 130% at 50% -20%,rgba(59,130,246,.18),transparent 60%),var(--panel)}
     .contact-card h2{font-size:clamp(28px,5.4vw,50px);font-weight:700;letter-spacing:-.02em;line-height:1.1;max-width:16ch;margin:0 auto}
     .contact-card p{color:var(--muted);font-size:clamp(15px,2vw,18px);max-width:52ch;margin:18px auto 0}
-    .contact-card .btn{margin-top:30px;font-family:var(--mono);letter-spacing:.02em}
+    .contact-card .btn{margin-top:30px;font-family:var(--mono);letter-spacing:.01em;
+      font-size:clamp(12.5px,3.4vw,16px);padding:15px clamp(16px,4vw,26px);overflow-wrap:anywhere;word-break:break-word}
 
     /* ---- footer ---- */
     .foot{border-top:1px solid var(--border);padding:34px 0}
