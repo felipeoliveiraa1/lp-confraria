@@ -182,13 +182,16 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   .car-dots button{width:8px;height:8px;border-radius:50%;border:0;cursor:pointer;background:var(--line-2);transition:background .2s,transform .2s;padding:0}
   .car-dots button.on{background:var(--gold);transform:scale(1.25)}
 
-  /* citação editorial */
-  .quote{background:var(--navy);color:#efe9da;text-align:center;padding:clamp(48px,7vw,72px) 0;position:relative;overflow:hidden}
+  /* citação editorial — mescla com a página original (hero-bg preto + feixes verdes) */
+  .quote{color:#f3f0e6;text-align:center;padding:clamp(56px,8vw,88px) 0;position:relative;overflow:hidden;
+    background:linear-gradient(rgba(4,8,12,.62),rgba(2,5,8,.86)),url('/assets/hero-bg.webp') center/cover no-repeat #05080c;
+    border-top:1px solid #0d1512;border-bottom:1px solid #0d1512}
   .quote::before{content:'“';position:absolute;top:-30px;left:50%;transform:translateX(-50%);
-    font-family:var(--serif);font-size:280px;line-height:1;color:rgba(202,161,77,.14);pointer-events:none}
-  .quote p{font-family:var(--serif);font-style:italic;font-size:clamp(21px,3.8vw,32px);line-height:1.4;max-width:24ch;margin:0 auto;position:relative}
-  .quote p em{color:var(--gold-soft);font-style:italic}
-  .quote .qsrc{font-family:var(--sans);font-size:12.5px;letter-spacing:.22em;text-transform:uppercase;color:rgba(239,233,218,.5);margin-top:18px;position:relative}
+    font-family:var(--serif);font-size:280px;line-height:1;color:rgba(30,255,0,.1);pointer-events:none}
+  .quote p{font-family:var(--serif);font-style:italic;font-size:clamp(21px,3.8vw,32px);line-height:1.4;max-width:24ch;margin:0 auto;position:relative;
+    text-shadow:0 2px 18px rgba(0,0,0,.6)}
+  .quote p em{color:#1eff00;font-style:italic}
+  .quote .qsrc{font-family:var(--sans);font-size:12.5px;letter-spacing:.22em;text-transform:uppercase;color:rgba(243,240,230,.55);margin-top:18px;position:relative}
 
   /* para quem — cards com foto */
   .fits{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:clamp(32px,5vw,44px);text-align:left}
@@ -246,20 +249,22 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   .offer-main .btn{margin-top:24px;width:100%}
   .seals{margin:20px 0 0;opacity:.85}
 
-  /* ===== garantia (faixa forte) ===== */
-  .guar{background:linear-gradient(180deg,#f6f0e1,#f1e9d6);border-top:1px solid var(--line-2);border-bottom:1px solid var(--line-2);position:relative;overflow:hidden}
+  /* ===== garantia — faixa dark mesclada da página original ===== */
+  .guar{position:relative;overflow:hidden;color:#eef2ea;
+    background:linear-gradient(rgba(3,7,4,.5),rgba(2,5,3,.78)),url('/assets/wpup_2026-01-bg-garantia.webp') center/cover no-repeat #04170c;
+    border-top:1px solid #102015;border-bottom:1px solid #102015}
   .guar::before{content:'';position:absolute;inset:0;pointer-events:none;
-    background:radial-gradient(640px 320px at 18% 50%, rgba(183,138,46,.12), transparent 70%)}
-  .guar-grid{display:grid;grid-template-columns:auto 1fr;gap:clamp(28px,5vw,56px);align-items:center;position:relative}
-  .guar-seal{width:clamp(150px,22vw,196px);filter:drop-shadow(0 18px 30px rgba(122,90,26,.35))}
-  .guar-body h2{font-size:clamp(26px,4.6vw,40px);line-height:1.15}
-  .guar-body h2 em{font-style:italic;color:var(--gold)}
-  .guar-body .glead{color:#5d5335;font-weight:600;font-size:clamp(15px,2.2vw,18px);letter-spacing:.04em;text-transform:uppercase;margin-bottom:10px}
-  .guar-body p{color:#6b6144;font-size:clamp(15.5px,2.1vw,17.5px);line-height:1.7;margin-top:14px;max-width:52ch}
-  .guar-body p strong{color:#3f3517}
+    background:radial-gradient(720px 380px at 22% 50%, rgba(30,255,0,.1), transparent 70%)}
+  .guar-grid{display:grid;grid-template-columns:minmax(0,340px) 1fr;gap:clamp(28px,5vw,56px);align-items:center;position:relative}
+  .guar-badge{width:100%;max-width:340px;filter:drop-shadow(0 20px 40px rgba(0,0,0,.5))}
+  .guar-body h2{color:#fff;font-size:clamp(26px,4.6vw,40px);line-height:1.15}
+  .guar-body h2 em{font-style:italic;color:#1eff00}
+  .guar-body .glead{color:#1eff00;font-weight:600;font-size:clamp(13px,2vw,15px);letter-spacing:.18em;text-transform:uppercase;margin-bottom:10px}
+  .guar-body p{color:#bcc9b8;font-size:clamp(15.5px,2.1vw,17.5px);line-height:1.7;margin-top:14px;max-width:52ch}
+  .guar-body p strong{color:#fff}
   .guar-points{display:flex;gap:22px;flex-wrap:wrap;margin-top:20px}
-  .guar-points span{display:inline-flex;align-items:center;gap:8px;color:#3f3517;font-weight:600;font-size:14.5px}
-  .guar-points svg{width:18px;height:18px;stroke:var(--gold);fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+  .guar-points span{display:inline-flex;align-items:center;gap:8px;color:#eef2ea;font-weight:600;font-size:14.5px}
+  .guar-points svg{width:18px;height:18px;stroke:#1eff00;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
 
   /* FAQ */
   .faq{max-width:640px;margin:clamp(32px,5vw,44px) auto 0;text-align:left}
@@ -292,7 +297,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .offer-main{text-align:center}
     .offer-main .offer-list{text-align:left;max-width:400px;margin-left:auto;margin-right:auto}
     .guar-grid{grid-template-columns:1fr;text-align:center}
-    .guar-seal{margin:0 auto}
+    .guar-badge{margin:0 auto;max-width:260px}
     .guar-body p{margin-left:auto;margin-right:auto}
     .guar-points{justify-content:center}
     .devices{justify-content:center}
@@ -479,28 +484,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <!-- ============ BLOCO 7 — GARANTIA ============ -->
 <section class="section guar reveal">
   <div class="wrap guar-grid">
-    <svg class="guar-seal" viewBox="0 0 200 200" aria-hidden="true">
-      <defs>
-        <linearGradient id="gg" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stop-color="#d8b25f"/><stop offset=".5" stop-color="#b78a2e"/><stop offset="1" stop-color="#9a7420"/>
-        </linearGradient>
-        <path id="arcT" d="M100 24a76 76 0 0 1 0 152" fill="none"/>
-        <path id="arcB" d="M100 176a76 76 0 0 1 0-152" fill="none"/>
-      </defs>
-      <circle cx="100" cy="100" r="96" fill="#fdfaf1" stroke="url(#gg)" stroke-width="5"/>
-      <circle cx="100" cy="100" r="84" fill="none" stroke="url(#gg)" stroke-width="1.6" stroke-dasharray="3 5"/>
-      <circle cx="100" cy="100" r="62" fill="url(#gg)" opacity=".12"/>
-      <text font-family="Georgia,serif" font-size="13.5" letter-spacing="3.4" fill="#9a7420" font-weight="700">
-        <textPath href="#arcT" startOffset="50%" text-anchor="middle">GARANTIA INCONDICIONAL</textPath>
-      </text>
-      <text font-family="Georgia,serif" font-size="13.5" letter-spacing="4.2" fill="#9a7420" font-weight="700">
-        <textPath href="#arcB" startOffset="50%" text-anchor="middle">★ RISCO ZERO ★</textPath>
-      </text>
-      <text x="100" y="112" text-anchor="middle" font-family="Georgia,serif" font-size="58" font-weight="700" fill="#1e2a4a">7</text>
-      <text x="100" y="134" text-anchor="middle" font-family="Georgia,serif" font-size="15" letter-spacing="5" fill="#9a7420" font-weight="700">DIAS</text>
-      <path d="M78 146h44" stroke="#b78a2e" stroke-width="2" stroke-linecap="round"/>
-      <path d="M100 54l4.6 9.4 10.4 1.5-7.5 7.3 1.8 10.3-9.3-4.9-9.3 4.9 1.8-10.3-7.5-7.3 10.4-1.5z" fill="url(#gg)"/>
-    </svg>
+    <img class="guar-badge" src="/assets/1d346509bbd077a2_garantia-7d-2-1.webp" alt="Selo: 7 dias de garantia incondicional" width="800" height="613" loading="lazy" decoding="async" />
     <div class="guar-body">
       <p class="glead">Sua única decisão é começar</p>
       <h2>Leia por 7 dias. Se não fizer sentido, <em>devolvemos cada centavo.</em></h2>
