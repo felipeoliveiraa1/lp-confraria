@@ -217,19 +217,21 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   .offer-list li{display:flex;gap:12px;align-items:flex-start;color:var(--sub);font-size:16px;line-height:1.55;padding:9px 0;border-top:1px solid var(--line)}
   .offer-list li:first-child{border-top:0}
   .offer-list svg{flex:0 0 20px;width:20px;height:20px;margin-top:3px;stroke:var(--gold);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-  /* bloco de preço (De / Por / ou / à vista) */
-  .price-box{margin:28px auto 0;max-width:420px;border:1px solid rgba(34,197,94,.45);border-radius:18px;
-    background:linear-gradient(180deg,#fbfef8,#eef7ec);padding:24px 20px 26px;position:relative;overflow:hidden}
-  .price-box::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#2bd465,#17a94b)}
-  .price-from{color:var(--faint);font-size:16px}
+  /* bloco de preço (De / Por / ou / à vista) — painel dark no estilo da página original */
+  .price-box{margin:28px auto 0;max-width:420px;border:1px solid rgba(34,197,94,.4);border-radius:18px;
+    background:radial-gradient(280px 140px at 50% -30px, rgba(30,255,0,.14), transparent 70%),
+      linear-gradient(180deg,#0c160e,#060d08);
+    padding:26px 20px 28px;position:relative;overflow:hidden;box-shadow:0 24px 50px rgba(9,18,11,.28)}
+  .price-from{color:#87a08c;font-size:16.5px}
   .price-from s{text-decoration:line-through}
-  .price-main{margin-top:6px;color:var(--ink)}
-  .price-main .plabel{display:block;font-family:var(--sans);font-size:15px;color:var(--sub);margin-bottom:2px}
-  .price-main .pval{font-family:var(--serif);font-weight:600;font-size:clamp(30px,6vw,40px);line-height:1.1;white-space:nowrap}
-  .price-or{display:flex;align-items:center;gap:14px;margin:14px auto 10px;max-width:260px;color:var(--faint);
+  .price-main{margin-top:8px}
+  .price-main .plabel{display:block;font-family:var(--sans);font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:#9fb8a4;margin-bottom:2px}
+  .price-main .pval{font-family:var(--sans);font-weight:700;color:#fff;font-size:clamp(34px,7vw,46px);
+    line-height:1.08;letter-spacing:-.01em;white-space:nowrap;text-shadow:0 2px 16px rgba(30,255,0,.18)}
+  .price-or{display:flex;align-items:center;gap:14px;margin:14px auto 10px;max-width:240px;color:#7d9483;
     font-family:var(--serif);font-style:italic;font-size:15px}
-  .price-or::before,.price-or::after{content:'';flex:1;height:1px;background:var(--line-2)}
-  .price-cash{font-family:var(--serif);font-weight:600;color:var(--gold);font-size:clamp(21px,4vw,27px)}
+  .price-or::before,.price-or::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.14)}
+  .price-cash{font-family:var(--sans);font-weight:700;color:#1eff00;font-size:clamp(22px,4.4vw,28px);letter-spacing:.01em}
   .offer-card .btn{margin-top:26px;width:100%}
   .seals{margin:20px auto 0;opacity:.85}
 
