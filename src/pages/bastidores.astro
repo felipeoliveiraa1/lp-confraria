@@ -2,11 +2,8 @@
 // "Os Bastidores da Moeda" — página de vendas (copy nova, tom claro/editorial).
 // Self-contained: head + estilos próprios (NÃO usa o tema dark/neon da home).
 // Mantém o tracking do funil (GTM + UTMify) por ser página de vendas da lp05.
-// PLACEHOLDERS a trocar quando chegarem: player da VSL, poster, checkout, parcela.
+// PLACEHOLDERS a trocar quando chegarem: checkout e parcela. (Página SEM VSL.)
 const CHECKOUT = 'https://pay.kirvano.com/448e308a-ae99-4316-a0d7-3fdff88fd71e'; // TODO: checkout do ebook
-const PLAYER_ID = 'vid-6a3d1ec9ac7ae1f31843b4c4'; // TODO: player da VSL nova
-const PLAYER_SRC = 'https://scripts.converteai.net/d9544c5d-ba21-4c7b-aa65-b6663bf5494d/players/6a3d1ec9ac7ae1f31843b4c4/v4/player.js'; // TODO
-const POSTER = '/assets/poster-vsl.webp'; // TODO: poster da VSL nova
 const A = '/assets/';
 const img = {
   statement: A + '1a4e3196f7247c55_IMG-AT-8_resultado1.webp',   // extrato no celular
@@ -51,16 +48,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   defer
 ></script>
 
-<!-- vturb optimizer + conexões da VSL -->
-<script is:inline>!function(i,n){i._plt=i._plt||(n&&n.timeOrigin?n.timeOrigin+n.now():Date.now())}(window,performance);</script>
-<link rel="preconnect" href="https://scripts.converteai.net" crossorigin />
-<link rel="preconnect" href="https://cdn.converteai.net" crossorigin />
-<link rel="preconnect" href="https://images.converteai.net" crossorigin />
-<link rel="dns-prefetch" href="https://license.vturb.com" />
-
 <link rel="preload" as="font" type="font/woff2" crossorigin href="/assets/InstrumentSans-600.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="/assets/InstrumentSans-400.woff2" />
-<link rel="preload" as="image" href={POSTER} fetchpriority="high" />
 
 <style is:inline>
   @font-face{font-family:'Instrument Sans';font-style:normal;font-weight:400;font-display:swap;src:url('/assets/InstrumentSans-400.woff2') format('woff2')}
@@ -139,23 +128,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     radial-gradient(720px 380px at 50% -8%, var(--gold-wash), transparent 70%)}
   .hero .wrap{position:relative}
 
-  /* VSL facade (claro) */
-  .vsl-slot{max-width:392px;margin:clamp(30px,5vw,44px) auto 0;position:relative;aspect-ratio:9/16;border-radius:18px;
-    overflow:hidden;background:var(--navy);cursor:pointer;
-    box-shadow:0 24px 60px rgba(9,18,11,.28),0 0 0 1px var(--line-2),0 0 0 7px var(--card),0 0 0 8px var(--line)}
-  .vsl__poster{width:100%;height:100%;object-fit:cover;display:block}
-  .vsl__cta{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;border:0;cursor:pointer;
-    background:radial-gradient(circle,rgba(10,14,26,.05),rgba(10,14,26,.5))}
-  .vsl__cta-box{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
-    width:54%;max-width:206px;aspect-ratio:1;padding:8%;border-radius:18px;
-    background:linear-gradient(165deg,#2ba23e,#1b7a2c);box-shadow:0 14px 38px rgba(0,0,0,.4),inset 0 0 0 1px rgba(30,255,0,.35);
-    transform:translateZ(0) scale(1);will-change:transform;transition:transform .15s ease;animation:vslPulse 2.1s ease-in-out infinite}
-  .vsl__cta-icon{width:34%;height:auto;display:block}
-  .vsl__cta-txt{color:#f2ead6;font-family:var(--sans);font-weight:700;font-size:clamp(14px,4vw,19px);
-    line-height:1.1;letter-spacing:.5px;text-align:center;text-transform:uppercase}
-  .vsl__cta:hover .vsl__cta-box{animation-play-state:paused;transform:translateZ(0) scale(1.05)}
-  @keyframes vslPulse{0%,100%{transform:translateZ(0) scale(1)}50%{transform:translateZ(0) scale(1.06)}}
-  .vsl-slot vturb-smartplayer{display:block;width:100%;height:100%}
   .hero .btn{margin-top:clamp(28px,4.5vw,38px)}
 
   /* ===== carrossel de capítulos ===== */
@@ -301,35 +273,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <div class="wrap">
     <p class="kicker">Os Bastidores da Moeda</p>
     <h1 class="title-xl narrow">O que há por trás do valor do dinheiro que você <em>usa todos os dias?</em></h1>
-
-    <!-- VSL — facade tap-to-play (player só entra no toque) -->
-    <div class="vsl-slot" id="vsl">
-      <img class="vsl__poster" src={POSTER} width="404" height="720" alt="Clique para assistir ao vídeo" fetchpriority="high" decoding="async" />
-      <button class="vsl__cta" id="vsl-play" type="button" aria-label="Clique para ouvir o vídeo">
-        <span class="vsl__cta-box">
-          <svg class="vsl__cta-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-            <path d="M8 5.5v13l11-6.5z" fill="#ffffff"/>
-          </svg>
-          <span class="vsl__cta-txt">CLIQUE<br />PARA OUVIR</span>
-        </span>
-      </button>
-    </div>
-    <script is:inline define:vars={{ PLAYER_ID, PLAYER_SRC }}>
-      (function () {
-        var box = document.getElementById('vsl'); if (!box) return;
-        var done = false;
-        function play() {
-          if (done) return; done = true;
-          var el = document.createElement('vturb-smartplayer');
-          el.id = PLAYER_ID;
-          el.setAttribute('style', 'display:block;width:100%;height:100%');
-          box.innerHTML = ''; box.appendChild(el);
-          var s = document.createElement('script');
-          s.src = PLAYER_SRC; s.async = true; document.head.appendChild(s);
-        }
-        box.addEventListener('click', play, { once: true });
-      })();
-    </script>
 
     <div><a class="btn" href="#oferta">QUERO CONHECER OS BASTIDORES <span class="arr">→</span></a></div>
   </div>
