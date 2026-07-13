@@ -1,6 +1,8 @@
 ---
 import Funnel from '../layouts/Funnel.astro';
 import Vsl from '../components/Vsl.astro';
+import PaytButton from '../components/PaytButton.astro';
+const PAYT = 'https://checkout.payt.com.br/multiple-oneclickbuyscript/LXGYD5.js';
 ---
 <Funnel title="DOWNSELL PAYT – A Sociedade Trader" poster="/assets/poster-downsell-payt.webp">
   <!-- gate: esconde a oferta (copy + botões) até 1:30 após o play -->
@@ -15,18 +17,12 @@ import Vsl from '../components/Vsl.astro';
         <p class="funnel-sub">Você já entende que acesso a Configuração Blindada te fará ter ainda mais resultado com menos esforço, né?</p>
         <p class="funnel-sub">Então, somente aqui e agora você poderá desbloquear o seu acesso com <strong>100 REAIS OFF</strong> de desconto tocando no botão abaixo…</p>
         <p class="funnel-price">De R$697 por <span class="green">R$597</span>.<small>Você também pode parcelar em até 12x. CORRE antes que saia do ar.</small></p>
-        <button class="accept-btn kirvano-payment-trigger" type="button">QUERO GARANTIR COM 100 REAIS DE DESCONTO.</button>
-        <button class="decline kirvano-refuse-trigger" type="button">NÃO QUERO ESSA OFERTA</button>
+        <PaytButton object="LYGKBL-LGBKW6" label="QUERO GARANTIR COM 100 REAIS DE DESCONTO." />
+        <a class="decline" href="/downsell-2-payt/">NÃO QUERO ESSA OFERTA</a>
       </div>
     </div>
   </main>
-  <!-- Kirvano downsell (funil montado no Kirvano) -->
-  <script is:inline>
-    var offer = "d8ba95e1-dbe6-4dd4-9f86-f36ff0f6e517";
-    var nextPageURL = "https://lp05.irmandadedodolar.com.br/priority-pass-2/";
-    var refusePageURL = "https://lp05.irmandadedodolar.com.br/downsell-2-payt/";
-  </script>
-  <script is:inline src="https://snippets.kirvano.com/upsell.min.js"></script>
+  <script is:inline src={PAYT}></script>
   <!-- reveal timer: 1:30 após o play. Robusto a 2º plano (Date.now) + ?preview p/ QA. -->
   <script is:inline>
     (function () {

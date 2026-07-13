@@ -1,5 +1,7 @@
 ---
 import Funnel from '../layouts/Funnel.astro';
+import PaytButton from '../components/PaytButton.astro';
+const PAYT = 'https://checkout.payt.com.br/multiple-oneclickbuyscript/LXGYD5.js';
 ---
 <Funnel title="PRIORITY PASS DOWNSELL – A Sociedade Trader">
   <main class="funnel">
@@ -12,14 +14,8 @@ import Funnel from '../layouts/Funnel.astro';
       <p class="funnel-sub">Para facilitar sua decisão e colocar você para rodar no <strong>New York Hub</strong> ainda hoje, estou liberando <strong class="green">R$ 50,00 DE DESCONTO</strong>.</p>
       <p class="funnel-price">De R$ 197,90 por <span class="green">12x de R$ 15,30</span></p>
       <p class="funnel-sub">Deixe a fila para os amadores. Garanta o seu lugar na via rápida e tenha sua Configuração Blindada ativa em tempo recorde.</p>
-      <button class="accept-btn kirvano-payment-trigger" type="button">QUERO GARANTIR A PRIORIDADE.</button>
+      <PaytButton object="RW6EBR-LQ8BKE" label="QUERO GARANTIR A PRIORIDADE." />
     </div>
   </main>
-  <!-- Kirvano priority pass 2 / downsell do priority (funil montado no Kirvano) -->
-  <script is:inline>
-    var offer = "6f92ac22-b11a-4f99-9b5e-4f3b9cea1fc4";
-    var nextPageURL = null;
-    var refusePageURL = null;
-  </script>
-  <script is:inline src="https://snippets.kirvano.com/upsell.min.js"></script>
+  <script is:inline src={PAYT}></script>
 </Funnel>
