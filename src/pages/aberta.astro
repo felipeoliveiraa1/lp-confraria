@@ -1,6 +1,9 @@
 ---
 import Base from '../layouts/Base.astro';
-// Versão "aberta": VSL + botão que só aparece após 13:55 de vídeo (mesmo gate da home).
+// Versão "aberta" com TESTE A/B de VSL (vturb ab-test 6a559424…):
+//   FRONT        6a3d1ec9ac7ae1f31843b4c4 -> pitch 16:35
+//   FRONT ANTIGO 6a444b0f4395e2f407d1fb96 -> pitch 18:03
+// O gate detecta qual variante o A/B carregou e usa o tempo certo.
 const CHECKOUT = 'https://checkout.payt.com.br/a2231a2d9c3dcd76353a3cb3b061c605?split=12';
 ---
 <Base>
@@ -42,12 +45,13 @@ const CHECKOUT = 'https://checkout.payt.com.br/a2231a2d9c3dcd76353a3cb3b061c605?
           var done = false;
           function play() {
             if (done) return; done = true;
+            // player de TESTE A/B da vturb (id "ab-…" e player.js em /ab-test/)
             var el = document.createElement('vturb-smartplayer');
-            el.id = 'vid-6a3d1ec9ac7ae1f31843b4c4';
+            el.id = 'ab-6a55942439ad7d1bd452174c';
             el.setAttribute('style', 'display:block;width:100%;height:100%');
             box.innerHTML = ''; box.appendChild(el);
             var s = document.createElement('script');
-            s.src = 'https://scripts.converteai.net/d9544c5d-ba21-4c7b-aa65-b6663bf5494d/players/6a3d1ec9ac7ae1f31843b4c4/v4/player.js';
+            s.src = 'https://scripts.converteai.net/d9544c5d-ba21-4c7b-aa65-b6663bf5494d/ab-test/6a55942439ad7d1bd452174c/player.js';
             s.async = true; document.head.appendChild(s);
             if (window.__startVslTimer) window.__startVslTimer(); // começa a contagem do reveal no play
           }
@@ -62,25 +66,48 @@ const CHECKOUT = 'https://checkout.payt.com.br/a2231a2d9c3dcd76353a3cb3b061c605?
     </div>
   </header>
 
-  <!-- reveal timer: 13:55 após o play. Robusto a aba em 2º plano (Date.now + checagem ao
-       voltar pra aba). ?preview revela na hora (QA). Persiste após revelar. -->
+  <!-- reveal timer A/B: FRONT (6a3d1ec9…) 16:35 · FRONT ANTIGO (6a444b0f…) 18:03.
+       O player.js do A/B escolhe a variante; detectamos qual carregou (script/DOM/rede)
+       e ajustamos o tempo. Sem detecção, vale o MAIOR tempo (nunca revela antes do pitch).
+       Robusto a 2º plano (Date.now) + ?preview p/ QA. Persiste após revelar. -->
   <script is:inline>
     (function () {
-      var DELAY = (13 * 60 + 55) * 1000; // 13:55 = 835s
-      var KEY = 'al_aberta_revealed', started = 0, iv = null;
+      var VAR_A = '6a3d1ec9ac7ae1f31843b4c4', DELAY_A = (16 * 60 + 35) * 1000; // FRONT: 16:35
+      var VAR_B = '6a444b0f4395e2f407d1fb96', DELAY_B = (18 * 60 + 3) * 1000;  // FRONT ANTIGO: 18:03
+      var DELAY = Math.max(DELAY_A, DELAY_B); // até detectar a variante, usa o maior
+      var KEY = 'al_aberta_revealed', started = 0, iv = null, dv = null;
       function reveal() {
         document.documentElement.classList.remove('gated');
         try { localStorage.setItem(KEY, '1'); } catch (e) {}
         if (iv) { clearInterval(iv); iv = null; }
+        if (dv) { clearInterval(dv); dv = null; }
       }
       function check() { if (started && Date.now() - started >= DELAY) reveal(); }
+      function has(id) {
+        try {
+          var i, s = document.querySelectorAll('script[src]');
+          for (i = 0; i < s.length; i++) if (s[i].src.indexOf(id) !== -1) return true;
+          if (document.querySelector('[id*="' + id + '"]')) return true;
+          var r = performance.getEntriesByType('resource');
+          for (i = 0; i < r.length; i++) if (r[i].name.indexOf(id) !== -1) return true;
+        } catch (e) {}
+        return false;
+      }
+      function hunt() {
+        if (has(VAR_A)) DELAY = DELAY_A;
+        else if (has(VAR_B)) DELAY = DELAY_B;
+        else return; // variante ainda não identificada; segue tentando
+        if (dv) { clearInterval(dv); dv = null; }
+        check();
+      }
       try { if (/[?&]preview/.test(location.search)) { document.documentElement.classList.remove('gated'); return; } } catch (e) {}
       try { if (localStorage.getItem(KEY)) { reveal(); return; } } catch (e) {}
       window.__startVslTimer = function () {
         if (started) return;
         started = Date.now();
-        setTimeout(reveal, DELAY);
+        setTimeout(reveal, DELAY); // backstop no tempo máximo (reveal é idempotente)
         iv = setInterval(check, 1000);
+        dv = setInterval(hunt, 1000); // identifica a variante escolhida pelo A/B
         document.addEventListener('visibilitychange', check);
         window.addEventListener('focus', check);
       };
