@@ -1,7 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 // Versão "aberta" com TESTE A/B de VSL (vturb ab-test 6a559424…):
-//   FRONT        6a3d1ec9ac7ae1f31843b4c4 -> pitch 16:35
+//   FRONT        6a3d1ec9ac7ae1f31843b4c4 -> pitch 13:52
 //   FRONT ANTIGO 6a444b0f4395e2f407d1fb96 -> pitch 18:03
 // O gate detecta qual variante o A/B carregou e usa o tempo certo.
 const CHECKOUT = 'https://checkout.payt.com.br/a2231a2d9c3dcd76353a3cb3b061c605?split=12';
@@ -66,13 +66,13 @@ const CHECKOUT = 'https://checkout.payt.com.br/a2231a2d9c3dcd76353a3cb3b061c605?
     </div>
   </header>
 
-  <!-- reveal timer A/B: FRONT (6a3d1ec9…) 16:35 · FRONT ANTIGO (6a444b0f…) 18:03.
+  <!-- reveal timer A/B: FRONT (6a3d1ec9…) 13:52 · FRONT ANTIGO (6a444b0f…) 18:03.
        O player.js do A/B escolhe a variante; detectamos qual carregou (script/DOM/rede)
        e ajustamos o tempo. Sem detecção, vale o MAIOR tempo (nunca revela antes do pitch).
        Robusto a 2º plano (Date.now) + ?preview p/ QA. Persiste após revelar. -->
   <script is:inline>
     (function () {
-      var VAR_A = '6a3d1ec9ac7ae1f31843b4c4', DELAY_A = (16 * 60 + 35) * 1000; // FRONT: 16:35
+      var VAR_A = '6a3d1ec9ac7ae1f31843b4c4', DELAY_A = (13 * 60 + 52) * 1000; // FRONT: 13:52
       var VAR_B = '6a444b0f4395e2f407d1fb96', DELAY_B = (18 * 60 + 3) * 1000;  // FRONT ANTIGO: 18:03
       var DELAY = Math.max(DELAY_A, DELAY_B); // até detectar a variante, usa o maior
       var KEY = 'al_aberta_revealed', started = 0, iv = null, dv = null;
