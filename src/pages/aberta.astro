@@ -17,46 +17,12 @@ const CHECKOUT = 'https://checkout.payt.com.br/a2231a2d9c3dcd76353a3cb3b061c605?
       <h1 class="hero-title">
         EXISTE UM MÉTODO ONDE O <span class="green">LUCRO VEM ANTES DA TEORIA</span> — E OS RESULTADOS SÃO REAIS
       </h1>
-      <!-- ===== VSL — facade tap-to-play (poster real instantâneo; player vturb só no toque) ===== -->
+      <!-- ===== VSL — player nativo do TESTE A/B do vturb (carrega no load = play-rate real) ===== -->
       <div class="vsl-slot" id="vsl">
-        <img class="vsl__poster" src="/assets/poster-vsl.webp" width="404" height="720" alt="Clique para assistir ao vídeo" fetchpriority="high" decoding="async" />
-        <button class="vsl__cta" id="vsl-play" type="button" aria-label="Clique para ouvir o vídeo">
-          <span class="vsl__cta-box">
-            <svg class="vsl__cta-icon" viewBox="0 0 120 100" aria-hidden="true" focusable="false">
-              <g fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M14 52 60 15 106 52" />
-                <path d="M24 50V88H96V50" />
-                <path d="M84 44V24H92V40" />
-              </g>
-              <circle cx="40" cy="56" r="6.5" fill="#fff" />
-              <rect x="33" y="63" width="13" height="23" rx="6" fill="#fff" />
-              <circle cx="60" cy="60" r="5" fill="#fff" />
-              <rect x="55" y="66" width="10" height="20" rx="5" fill="#fff" />
-              <circle cx="80" cy="56" r="6.5" fill="#fff" />
-              <path d="M80 63 70 86h20z" fill="#fff" />
-            </svg>
-            <span class="vsl__cta-txt">CLIQUE<br />PARA OUVIR</span>
-          </span>
-        </button>
+        <vturb-smartplayer id="ab-6a55942439ad7d1bd452174c" style="display:block;width:100%;height:100%"></vturb-smartplayer>
       </div>
       <script is:inline>
-        (function () {
-          var box = document.getElementById('vsl'); if (!box) return;
-          var done = false;
-          function play() {
-            if (done) return; done = true;
-            // player de TESTE A/B da vturb (id "ab-…" e player.js em /ab-test/)
-            var el = document.createElement('vturb-smartplayer');
-            el.id = 'ab-6a55942439ad7d1bd452174c';
-            el.setAttribute('style', 'display:block;width:100%;height:100%');
-            box.innerHTML = ''; box.appendChild(el);
-            var s = document.createElement('script');
-            s.src = 'https://scripts.converteai.net/d9544c5d-ba21-4c7b-aa65-b6663bf5494d/ab-test/6a55942439ad7d1bd452174c/player.js';
-            s.async = true; document.head.appendChild(s);
-            if (window.__startVslTimer) window.__startVslTimer(); // começa a contagem do reveal no play
-          }
-          box.addEventListener('click', play, { once: true });
-        })();
+        (function(){var s=document.createElement('script');s.src='https://scripts.converteai.net/d9544c5d-ba21-4c7b-aa65-b6663bf5494d/ab-test/6a55942439ad7d1bd452174c/player.js';s.async=true;document.head.appendChild(s);})();
       </script>
 
       <div class="gate" id="hero-cta">
@@ -66,55 +32,24 @@ const CHECKOUT = 'https://checkout.payt.com.br/a2231a2d9c3dcd76353a3cb3b061c605?
     </div>
   </header>
 
-  <!-- reveal timer A/B: FRONT (6a3d1ec9…) 13:52 · FRONT ANTIGO (6a444b0f…) 18:03.
-       O player.js do A/B escolhe a variante; detectamos qual carregou (script/DOM/rede)
-       e ajustamos o tempo. Sem detecção, vale o MAIOR tempo (nunca revela antes do pitch).
-       Robusto a 2º plano (Date.now) + ?preview p/ QA. Persiste após revelar. -->
+  <!-- reveal A/B: CTA aparece quando o VÍDEO chega no pitch da variante sorteada
+       (FRONT 6a3d1ec9 -> 13:52 · FRONT ANTIGO 6a444b0f -> 18:03). Lê o currentTime real
+       do player + a variante escolhida (localStorage vturb-ab-<testId>). Até saber a
+       variante usa o maior tempo. Fail-open se o player não carregar. ?preview p/ QA. -->
   <script is:inline>
     (function () {
-      var VAR_A = '6a3d1ec9ac7ae1f31843b4c4', DELAY_A = (13 * 60 + 52) * 1000; // FRONT: 13:52
-      var VAR_B = '6a444b0f4395e2f407d1fb96', DELAY_B = (18 * 60 + 3) * 1000;  // FRONT ANTIGO: 18:03
-      var DELAY = Math.max(DELAY_A, DELAY_B); // até detectar a variante, usa o maior
-      var KEY = 'al_aberta_revealed', started = 0, iv = null, dv = null;
-      function reveal() {
-        document.documentElement.classList.remove('gated');
-        try { localStorage.setItem(KEY, '1'); } catch (e) {}
-        if (iv) { clearInterval(iv); iv = null; }
-        if (dv) { clearInterval(dv); dv = null; }
-      }
-      function check() { if (started && Date.now() - started >= DELAY) reveal(); }
-      function has(id) {
-        try {
-          var i, s = document.querySelectorAll('script[src]');
-          for (i = 0; i < s.length; i++) if (s[i].src.indexOf(id) !== -1) return true;
-          if (document.querySelector('[id*="' + id + '"]')) return true;
-          var r = performance.getEntriesByType('resource');
-          for (i = 0; i < r.length; i++) if (r[i].name.indexOf(id) !== -1) return true;
-        } catch (e) {}
-        return false;
-      }
-      function hunt() {
-        // sinal primário: o player A/B grava a variante escolhida no localStorage
-        // (chave vturb-ab-<testId> = playerId da variante). Confirmado em produção.
-        var v = null;
-        try { v = localStorage.getItem('vturb-ab-6a55942439ad7d1bd452174c'); } catch (e) {}
-        if (v === VAR_A || (!v && has(VAR_A))) DELAY = DELAY_A;
-        else if (v === VAR_B || (!v && has(VAR_B))) DELAY = DELAY_B;
-        else return; // variante ainda não identificada; segue tentando
-        if (dv) { clearInterval(dv); dv = null; }
-        check();
-      }
+      var AB_KEY = 'vturb-ab-6a55942439ad7d1bd452174c';
+      var VAR_A = '6a3d1ec9ac7ae1f31843b4c4', PITCH_A = 13 * 60 + 52; // FRONT (nova): 13:52
+      var VAR_B = '6a444b0f4395e2f407d1fb96', PITCH_B = 18 * 60 + 3;  // FRONT ANTIGO: 18:03
+      var PITCH = Math.max(PITCH_A, PITCH_B); // até detectar a variante, usa o maior
+      var KEY = 'al_aberta_revealed', iv = null, t0 = Date.now(), saw = false;
+      function reveal() { document.documentElement.classList.remove('gated'); try { localStorage.setItem(KEY, '1'); } catch (e) {} if (iv) { clearInterval(iv); iv = null; } }
+      function applyPitch() { var v = null; try { v = localStorage.getItem(AB_KEY); } catch (e) {} if (v === VAR_A) PITCH = PITCH_A; else if (v === VAR_B) PITCH = PITCH_B; }
+      function vtime() { try { var a = (window.smartplayer && window.smartplayer.instances) || []; for (var i = 0; i < a.length; i++) { var t = a[i] && a[i].instance && a[i].instance.currentTime; if (typeof t === 'number' && isFinite(t)) return t; } } catch (e) {} return -1; }
+      function check() { applyPitch(); var t = vtime(); if (t >= 0) saw = true; if (t >= PITCH) return reveal(); if (!saw && Date.now() - t0 > 30000) reveal(); }
       try { if (/[?&]preview/.test(location.search)) { document.documentElement.classList.remove('gated'); return; } } catch (e) {}
       try { if (localStorage.getItem(KEY)) { reveal(); return; } } catch (e) {}
-      window.__startVslTimer = function () {
-        if (started) return;
-        started = Date.now();
-        setTimeout(reveal, DELAY); // backstop no tempo máximo (reveal é idempotente)
-        iv = setInterval(check, 1000);
-        dv = setInterval(hunt, 1000); // identifica a variante escolhida pelo A/B
-        document.addEventListener('visibilitychange', check);
-        window.addEventListener('focus', check);
-      };
+      iv = setInterval(check, 1000);
     })();
   </script>
 </Base>
