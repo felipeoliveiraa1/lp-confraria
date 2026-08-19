@@ -112,7 +112,9 @@ a{color:inherit;text-decoration:none}
 .vsl__cta:hover .vsl__cta-box{animation-play-state:paused;transform:translateZ(0) scale(1.05)}
 @keyframes vslPulse{0%,100%{transform:translateZ(0) scale(1)}50%{transform:translateZ(0) scale(1.06)}}
 @media (prefers-reduced-motion:reduce){.vsl__cta-box{animation:none;transform:translateZ(0) scale(1)}}
-.vsl-slot vturb-smartplayer{display:block;width:100%;height:100%}
+/* poster estático (miniatura da VSL) = LCP rápido; o player cobre por cima ao carregar */
+.vsl-poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;z-index:0;pointer-events:none}
+.vsl-slot vturb-smartplayer{display:block;width:100%;height:100%;position:relative;z-index:1}
 
 /* "até quando?" — bg-s2 already contains the Nubank phone + faded red text */
 .quando{padding:20px clamp(10px,2.5vw,26px)}
