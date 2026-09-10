@@ -1,31 +1,30 @@
 ---
 import Base from '../layouts/Base.astro';
-// Versão "aberta" com TESTE A/B de VSL (vturb ab-test 6a559424…):
-//   FRONT        6a3d1ec9ac7ae1f31843b4c4 -> pitch 13:52
-//   FRONT ANTIGO 6a444b0f4395e2f407d1fb96 -> pitch 18:03
-// O gate detecta qual variante o A/B carregou e usa o tempo certo.
-const CHECKOUT = 'https://checkout.payt.com.br/5ecd76cef086597a75e716faf73aa445?split=12';
+// /aberta (lp05) — VSL única: player 6aa31e01 (mídia 6a444ad2 "FRONT ANTIGO", 24:44).
+// O botão aparece quando o vídeo chega em 18:03 — tempo na LINHA DO TEMPO do vídeo.
+// O player roda com turbo 1.2x, então dá ~15:02 no cronômetro.
+const CHECKOUT = 'https://checkout.payt.com.br/07514cdb386b01d853193619fa6b44e6?split=12';
 ---
 <Base>
-  <!-- gate: esconde o botão até o play completar 13:55. Roda antes da pintura (sem flash).
+  <!-- gate: esconde o botão até o vídeo chegar em 18:03. Roda antes da pintura (sem flash).
        Sem JS / com ?preview, nada é escondido. -->
-  <script is:inline>try{if(!localStorage.getItem('al_aberta_revealed')&&!/[?&]preview/.test(location.search))document.documentElement.classList.add('gated')}catch(e){document.documentElement.classList.add('gated')}</script>
+  <script is:inline>try{if(!localStorage.getItem('al_aberta_revealed_v2')&&!/[?&]preview/.test(location.search))document.documentElement.classList.add('gated')}catch(e){document.documentElement.classList.add('gated')}</script>
 
   <!-- ============ HERO (aberta) ============ -->
   <header class="hero" style="background-image:url(/assets/hero-bg.webp)">
     <div class="wrap--narrow">
       <h1 class="hero-title">
-        EXISTE UM MÉTODO ONDE O <span class="green">LUCRO VEM ANTES DA TEORIA</span> — E OS RESULTADOS SÃO REAIS
+        Funcionários brasileiros estão <span class="green">deixando o CLT</span> com essa nova inteligência artificial.
       </h1>
-      <!-- ===== VSL — player nativo do TESTE A/B do vturb (carrega no load = play-rate real) ===== -->
+      <!-- ===== VSL — player nativo do vturb (carrega no load = play-rate real) ===== -->
       <div class="vsl-slot" id="vsl">
-        <img class="vsl-poster" src="/assets/vsl-cover-aberta.webp" alt="" fetchpriority="high" decoding="async" width="460" height="818" />
-        <vturb-smartplayer id="ab-6a55942439ad7d1bd452174c" style="display:block;width:100%;height:100%"></vturb-smartplayer>
+        <img class="vsl-poster" src="/assets/vsl-cover-aberta.webp" alt="" fetchpriority="high" decoding="async" width="404" height="720" />
+        <vturb-smartplayer id="vid-6aa31e01434c2f17aeac691a" style="display:block;width:100%;height:100%"></vturb-smartplayer>
       </div>
       <script is:inline>
         /* adia o player p/ logo após o 1º paint (fora da janela do LCP): no máx 2s (requestIdleCallback)
            ou na 1ª interação. Ainda carrega p/ todos que ficam >~1s = play-rate real preservado. */
-        (function(){var SRC='https://scripts.converteai.net/d9544c5d-ba21-4c7b-aa65-b6663bf5494d/ab-test/6a55942439ad7d1bd452174c/player.js',done=false;function load(){if(done)return;done=true;var s=document.createElement('script');s.src=SRC;s.async=true;document.head.appendChild(s);}if('requestIdleCallback' in window){requestIdleCallback(load,{timeout:2000});}else{setTimeout(load,1500);}['pointerdown','touchstart','scroll','keydown'].forEach(function(e){addEventListener(e,load,{once:true,passive:true});});})();
+        (function(){var SRC='https://scripts.converteai.net/d9544c5d-ba21-4c7b-aa65-b6663bf5494d/players/6aa31e01434c2f17aeac691a/v4/player.js',done=false;function load(){if(done)return;done=true;var s=document.createElement('script');s.src=SRC;s.async=true;document.head.appendChild(s);}if('requestIdleCallback' in window){requestIdleCallback(load,{timeout:2000});}else{setTimeout(load,1500);}['pointerdown','touchstart','scroll','keydown'].forEach(function(e){addEventListener(e,load,{once:true,passive:true});});})();
       </script>
 
       <div class="gate" id="hero-cta">
@@ -35,21 +34,30 @@ const CHECKOUT = 'https://checkout.payt.com.br/5ecd76cef086597a75e716faf73aa445?
     </div>
   </header>
 
-  <!-- reveal A/B: CTA aparece quando o VÍDEO chega no pitch da variante sorteada
-       (FRONT 6a3d1ec9 -> 13:52 · FRONT ANTIGO 6a444b0f -> 18:03). Lê o currentTime real
-       do player + a variante escolhida (localStorage vturb-ab-<testId>). Até saber a
-       variante usa o maior tempo. Fail-open se o player não carregar. ?preview p/ QA. -->
+  <!-- reveal: o CTA aparece quando o VÍDEO chega em 18:03 (currentTime real do player).
+       ?preview revela na hora (QA) · ?debug mostra o tempo ao vivo. Persiste.
+       Fail-open se o player não carregar (adblock). -->
   <script is:inline>
     (function () {
-      var AB_KEY = 'vturb-ab-6a55942439ad7d1bd452174c';
-      var VAR_A = '6a3d1ec9ac7ae1f31843b4c4', PITCH_A = 13 * 60 + 52; // FRONT (nova): 13:52
-      var VAR_B = '6a444b0f4395e2f407d1fb96', PITCH_B = 18 * 60 + 3;  // FRONT ANTIGO: 18:03
-      var PITCH = Math.max(PITCH_A, PITCH_B); // até detectar a variante, usa o maior
-      var KEY = 'al_aberta_revealed', iv = null, t0 = Date.now(), saw = false;
+      var PITCH = 18 * 60 + 3; // 18:03 = 1083s de video (~15:02 no cronometro, turbo 1.2x)
+      var KEY = 'al_aberta_revealed_v2', iv = null, t0 = Date.now(), saw = false;
+      function mmss(s) { if (!(s >= 0)) return '--:--'; var m = Math.floor(s / 60), r = Math.floor(s % 60); return (m < 10 ? '0' : '') + m + ':' + (r < 10 ? '0' : '') + r; }
       function reveal() { document.documentElement.classList.remove('gated'); try { localStorage.setItem(KEY, '1'); } catch (e) {} if (iv) { clearInterval(iv); iv = null; } }
-      function applyPitch() { var v = null; try { v = localStorage.getItem(AB_KEY); } catch (e) {} if (v === VAR_A) PITCH = PITCH_A; else if (v === VAR_B) PITCH = PITCH_B; }
       function vtime() { try { var a = (window.smartplayer && window.smartplayer.instances) || []; for (var i = 0; i < a.length; i++) { var t = a[i] && a[i].instance && a[i].instance.currentTime; if (typeof t === 'number' && isFinite(t)) return t; } } catch (e) {} return -1; }
-      function check() { applyPitch(); var t = vtime(); if (t >= 0) saw = true; if (t >= PITCH) return reveal(); if (!saw && Date.now() - t0 > 30000) reveal(); }
+      var dbg = null;
+      if (/[?&]debug/.test(location.search)) {
+        dbg = document.createElement('div');
+        dbg.style.cssText = 'position:fixed;left:8px;bottom:8px;z-index:99999;background:rgba(0,0,0,.85);color:#1eff00;font:12px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;padding:9px 12px;border:1px solid #1eff00;border-radius:8px;pointer-events:none;white-space:pre';
+        var put = function () { if (document.body && !dbg.parentNode) document.body.appendChild(dbg); };
+        put(); document.addEventListener('DOMContentLoaded', put);
+      }
+      function check() {
+        var t = vtime();
+        if (t >= 0) saw = true;
+        if (dbg) dbg.textContent = 'pitch: ' + mmss(PITCH) + '\nvideo: ' + mmss(t) + '\nfalta: ' + mmss(PITCH - t);
+        if (t >= PITCH) return reveal();
+        if (!saw && Date.now() - t0 > 30000) reveal();
+      }
       try { if (/[?&]preview/.test(location.search)) { document.documentElement.classList.remove('gated'); return; } } catch (e) {}
       try { if (localStorage.getItem(KEY)) { reveal(); return; } } catch (e) {}
       iv = setInterval(check, 1000);
