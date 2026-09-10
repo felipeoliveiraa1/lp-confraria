@@ -161,14 +161,35 @@ const options = [
   },
 ];
 
+const lp08Clt = {
+  desktop: [
+    ['Trabalhadores brasileiros estão {{saindo da CLT}}', false],
+    ['com essa nova inteligência artificial.', false],
+  ],
+  mobile: [
+    ['Trabalhadores brasileiros', false],
+    ['estão {{saindo da CLT}}', false],
+    ['com essa nova', false],
+    ['inteligência artificial.', false],
+  ],
+  subDesktop: [
+    'Assista ao vídeo abaixo e veja como fazer um segundo salário em dólar',
+    'ainda essa semana',
+  ],
+  subMobile: [
+    'Assista ao vídeo abaixo e veja como',
+    'fazer um segundo salário em dólar',
+    'ainda essa semana',
+  ],
+};
+
 const escapeXml = (value) => value.replace(/[&<>"']/g, (char) => ({
   '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&apos;',
 })[char]);
 
-const formatLine = (value) => escapeXml(value).replace(
-  /\[\[(.*?)\]\]/g,
-  '<tspan text-decoration="underline">$1</tspan>',
-);
+const formatLine = (value) => escapeXml(value)
+  .replace(/\[\[(.*?)\]\]/g, '<tspan text-decoration="underline">$1</tspan>')
+  .replace(/\{\{(.*?)\}\}/g, '<tspan class="inline-green">$1</tspan>');
 
 function svgFor(option, mobile) {
   const width = mobile ? 410 : 1500;
@@ -205,6 +226,7 @@ function svgFor(option, mobile) {
       @font-face { font-family: Instrument; font-weight: 600; src: url(data:font/woff2;base64,${fontSemibold.toString('base64')}); }
       .headline { font-family: Instrument, sans-serif; font-size: ${headlineSize}px; font-weight: 500; fill: #dddddd; }
       .headline.green { font-weight: 600; fill: #1eff00; }
+      .headline .inline-green { font-weight: 600; fill: #1eff00; }
       .subheadline { font-family: Instrument, sans-serif; font-size: ${subSize}px; font-weight: 600; fill: #ff5454; }
     </style>
     ${headlineText}
@@ -223,4 +245,10 @@ for (const [index, option] of options.entries()) {
   }
 }
 
-console.log(`Geradas ${options.length * 2} artes em ${outputDir}`);
+for (const mobile of [false, true]) {
+  const device = mobile ? 'mobile' : 'desktop';
+  const svg = svgFor(lp08Clt, mobile);
+  await sharp(Buffer.from(svg)).png().toFile(path.join(outputDir, `headline-lp08-clt-${device}.png`));
+}
+
+console.log(`Geradas ${options.length * 2 + 2} artes em ${outputDir}`);
