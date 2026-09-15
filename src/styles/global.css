@@ -115,12 +115,6 @@ a{color:inherit;text-decoration:none}
 /* poster estático (miniatura da VSL) = LCP rápido; o player cobre por cima ao carregar */
 .vsl-poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;z-index:0;pointer-events:none}
 .vsl-slot vturb-smartplayer{display:block;width:100%;height:100%;position:relative;z-index:1}
-/* Headline do vturb (renderizada DENTRO do player, acima do video): o slot precisa
-   crescer, senao a aspect-ratio 9/16 + overflow:hidden cortam ~150px e o poster
-   aparece atras da headline. A classe e aplicada por JS so quando a headline existe. */
-.vsl-slot.has-headline{aspect-ratio:auto;overflow:visible}
-.vsl-slot.has-headline vturb-smartplayer{height:auto}
-.vsl-slot.has-headline .vsl-poster{display:none}
 
 /* "até quando?" — bg-s2 already contains the Nubank phone + faded red text */
 .quando{padding:20px clamp(10px,2.5vw,26px)}

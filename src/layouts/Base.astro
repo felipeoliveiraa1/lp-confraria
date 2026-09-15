@@ -49,19 +49,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <link rel="preload" as="font" type="font/woff2" crossorigin href="/assets/InstrumentSans-500.woff2" />
 <!-- above-the-fold LCP = fundo do hero (o slot da VSL é 9/16 sem poster; o player é adiado) -->
 <link rel="preload" as="image" href="/assets/hero-bg.webp" fetchpriority="high" />
-<script is:inline>
-/* Se o vturb renderizar uma headline dentro do player, libera o slot p/ crescer
-   (sem isso a headline fica cortada e sobreposta ao poster). Inerte se nao houver. */
-(function(){var n=0,t=setInterval(function(){
-  if(++n>60){clearInterval(t);return;}
-  var p=document.querySelector('.vsl-slot vturb-smartplayer');
-  if(!p||!p.shadowRoot)return;
-  if(p.shadowRoot.getElementById('vturb-headline-image')){
-    var s=p.closest('.vsl-slot'); if(s)s.classList.add('has-headline');
-    clearInterval(t);
-  }
-},500);})();
-</script>
 </head>
 <body>
 <!-- Google Tag Manager (noscript) -->
