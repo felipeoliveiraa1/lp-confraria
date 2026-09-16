@@ -1,0 +1,60 @@
+---
+import Funnel from '../layouts/Funnel.astro';
+import Vsl from '../components/Vsl.astro';
+import PaytButton from '../components/PaytButton.astro';
+// UPSELL 2 — ACESSO VITALÍCIO. Clone do upsell 01 com a VSL e o produto próprios.
+// VSL: vid-6aab1388 (mídia 6aab12ff, 5:32, turbo 1.2x) · pitch 04:30
+const PAYT = 'https://checkout.payt.com.br/multiple-oneclickbuyscript/LJAMP7.js';
+---
+<Funnel title="VITALÍCIO – A Sociedade Trader">
+  <!-- gate: esconde os botões até o vídeo chegar em 4:30. Roda antes da pintura (sem
+       flash); sem JS, nada é escondido (fallback). -->
+  <script is:inline>try{if(!localStorage.getItem('al_vitalicio_revealed')&&!/[?&]preview/.test(location.search))document.documentElement.classList.add('gated')}catch(e){document.documentElement.classList.add('gated')}</script>
+  <div class="scarcity">⚠️ IMPORTANTE: ESSA PÁGINA SAIRÁ DO AR EM <span id="cd">15:00</span></div>
+  <main class="funnel">
+    <div class="funnel-wrap">
+      <h1 class="funnel-title">Sua compra ainda<br />não está completa…</h1>
+      <ul class="steps-card">
+        <li><span class="ic">✅</span> Passo 1: Sociedade do Trader</li>
+        <li class="is-now"><span class="ic">⚙️</span> Passo 2: Configuração blindada</li>
+        <li><span class="ic">⏳</span> Passo 3: Compra concluída!</li>
+      </ul>
+      <Vsl playerId="vid-6aab13880bc629bcb0253098" />
+      <div class="gate" id="vitalicio-cta">
+        <PaytButton object="RK995Z-4O2G6Z" label="QUERO GARANTIR ACESSO VITALICIO" installments />
+        <a class="decline" href="/downsell-payt/">NÃO QUERO ESSA OFERTA</a>
+      </div>
+    </div>
+  </main>
+  <script is:inline src={PAYT}></script>
+  <!-- reveal: CTA aparece quando o VÍDEO chega em 4:30 (currentTime real do player).
+       Tempo na LINHA DO TEMPO do vídeo — o player roda com turbo 1.2x, então dá ~3:45
+       no cronômetro. ?preview revela na hora · ?debug mostra o tempo ao vivo.
+       Persiste. Fail-open se o player não carregar (adblock). -->
+  <script is:inline>
+    (function () {
+      var PITCH = 4 * 60 + 30; // 4:30 = 270s de vídeo (~3:45 no cronômetro, turbo 1.2x)
+      var KEY = 'al_vitalicio_revealed', iv = null, t0 = Date.now(), saw = false;
+      function mmss(s) { if (!(s >= 0)) return '--:--'; var m = Math.floor(s / 60), r = Math.floor(s % 60); return (m < 10 ? '0' : '') + m + ':' + (r < 10 ? '0' : '') + r; }
+      function reveal() { document.documentElement.classList.remove('gated'); try { localStorage.setItem(KEY, '1'); } catch (e) {} if (iv) { clearInterval(iv); iv = null; } }
+      function vtime() { try { var a = (window.smartplayer && window.smartplayer.instances) || []; for (var i = 0; i < a.length; i++) { var t = a[i] && a[i].instance && a[i].instance.currentTime; if (typeof t === 'number' && isFinite(t)) return t; } } catch (e) {} return -1; }
+      var dbg = null;
+      if (/[?&]debug/.test(location.search)) {
+        dbg = document.createElement('div');
+        dbg.style.cssText = 'position:fixed;left:8px;bottom:8px;z-index:99999;background:rgba(0,0,0,.85);color:#1eff00;font:12px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;padding:9px 12px;border:1px solid #1eff00;border-radius:8px;pointer-events:none;white-space:pre';
+        var put = function () { if (document.body && !dbg.parentNode) document.body.appendChild(dbg); };
+        put(); document.addEventListener('DOMContentLoaded', put);
+      }
+      function check() {
+        var t = vtime();
+        if (t >= 0) saw = true;
+        if (dbg) dbg.textContent = 'pitch: ' + mmss(PITCH) + '\nvideo: ' + mmss(t) + '\nfalta: ' + mmss(PITCH - t);
+        if (t >= PITCH) return reveal();
+        if (!saw && Date.now() - t0 > 30000) reveal();
+      }
+      try { if (/[?&]preview/.test(location.search)) { document.documentElement.classList.remove('gated'); return; } } catch (e) {}
+      try { if (localStorage.getItem(KEY)) { reveal(); return; } } catch (e) {}
+      iv = setInterval(check, 1000);
+    })();
+  </script>
+</Funnel>

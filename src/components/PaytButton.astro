@@ -1,9 +1,37 @@
 ---
 // Botão one-click do Payt. O script multiple-oneclickbuyscript varre a página por
 // elementos com payt_action="oneclick_buy" e cobra o produto do data-object; o
-// <select payt_element="installment"> oculto é onde ele injeta as parcelas.
-// IMPORTANTE: incluir o <script src=...LXGYD5.js> UMA vez por página (no .astro).
-const { object, label } = Astro.props;
+// <select payt_element="installment"> é onde ele injeta as parcelas.
+//
+// installments -> mostra o select de parcelas (comprador escolhe no cartão).
+// ATENÇÃO: o script da Payt só popula as parcelas quando a página recebe _o (order_id)
+// e _m (método) — o checkout adiciona isso ao redirecionar após a compra do principal.
+// Fora desse fluxo ele aborta ("parametro _o inexistente na url") e o select fica vazio
+// (o iOS mostra "Sem Opções"). Por isso o select nasce OCULTO e só aparece quando
+// realmente tiver opções. No PIX é sempre 1x e o script ignora o select.
+//
+// IMPORTANTE: incluir o <script src=...LJAMP7.js> UMA vez por página (no .astro).
+const { object, label, installments = false } = Astro.props;
 ---
 <a class="accept-btn" data-object={object} href="#" payt_action="oneclick_buy">{label}</a>
-<select data-object={object} payt_element="installment" style="display:none"></select>
+<select
+  data-object={object}
+  payt_element="installment"
+  class={installments ? 'payt-installment' : undefined}
+  style="display:none"
+></select>
+{installments && (
+  <script is:inline>
+    (function () {
+      var n = 0, t = setInterval(function () {
+        if (++n > 80) { clearInterval(t); return; }           // ~24s e desiste
+        var s = document.querySelector('select.payt-installment');
+        if (s && s.options.length > 0) {                       // só aparece com parcelas
+          s.style.cssText = 'display:block;margin:10px auto 0;max-width:240px;padding:10px;' +
+            'border:1px solid #cbd5e1;border-radius:6px;background:#fff;font-size:14px';
+          clearInterval(t);
+        }
+      }, 300);
+    })();
+  </script>
+)}
