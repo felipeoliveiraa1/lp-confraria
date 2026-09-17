@@ -1,0 +1,578 @@
+---
+import Base from '../layouts/Base.astro';
+const CHECKOUT = 'https://checkout.payt.com.br/07514cdb386b01d853193619fa6b44e6?split=12';
+---
+<Base>
+  <header class="hero" style="background-image:url(/assets/hero-bg.webp)">
+    <div class="wrap--narrow">
+      <!-- Urgency Banner -->
+      <div class="urgency-banner">
+        <div class="urgency-content">
+          <span class="urgency-icon">⏰</span>
+          <div class="urgency-text">
+            <p class="urgency-label">SUA VAGA ESTÁ RESERVADA</p>
+            <p class="urgency-sublabel">Garantida pelos próximos <span class="timer-display" id="timer">2:00</span></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Message -->
+      <div class="main-message">
+        <div class="vaga-counter">
+          <span class="vaga-num">16</span>
+          <span class="vaga-sep">/</span>
+          <span class="vaga-total">20</span>
+        </div>
+        <h1 class="message-title">vagas preenchidas</h1>
+        <p class="message-sub">Sua vaga é <strong class="highlight">16 de 20</strong></p>
+      </div>
+
+      <!-- CTA Section -->
+      <div class="cta-section">
+        <p class="cta-message">Clique no botão abaixo para <strong>finalizar sua inscrição</strong></p>
+        <div class="cta-wrap">
+          <a class="btn btn--large" id="cta-checkout" href="#" onclick="openCheckoutPopup(event)">
+            GARANTIR MINHA VAGA AGORA
+          </a>
+        </div>
+        <p class="cta-note">
+          <svg class="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 12l2 2 4-4"/>
+            <circle cx="12" cy="12" r="10"/>
+          </svg>
+          Acesso imediato após a confirmação
+        </p>
+      </div>
+
+      <!-- Trust Badges -->
+      <div class="trust-section">
+        <div class="trust-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+          <span>Pagamento Seguro</span>
+        </div>
+        <div class="trust-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="1" y="4" width="22" height="16" rx="2"/>
+            <path d="M1 10h22"/>
+          </svg>
+          <span>PIX ou Cartão</span>
+        </div>
+        <div class="trust-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+          </svg>
+          <span>Garantia 7 dias</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <footer class="foot">
+    <p>Operar mercados alavancados envolve risco real de perda.</p>
+    <p style="margin-top:8px">MATCHUP TREINAMENTOS LTDA - ME - CNPJ 43.108.423/0001-32</p>
+  </footer>
+
+  <!-- Checkout Popup Modal -->
+  <div id="checkout-popup" class="popup-overlay" style="display:none">
+    <div class="popup-content">
+      <button class="popup-close" onclick="closePopup()">&times;</button>
+      <h2 class="popup-title">Complete seus dados</h2>
+      <p class="popup-subtitle">para garantir sua vaga</p>
+      <form id="checkout-form" onsubmit="submitCheckout(event)">
+        <div class="form-group">
+          <label for="full_name">Nome completo</label>
+          <input type="text" id="full_name" name="full_name" placeholder="Seu nome completo" required>
+        </div>
+        <div class="form-group">
+          <label for="email">E-mail</label>
+          <input type="email" id="email" name="email" placeholder="seu@email.com" required>
+        </div>
+        <div class="form-group">
+          <label for="phone">Telefone</label>
+          <input type="tel" id="phone" name="phone" placeholder="(00) 00000-0000" required>
+        </div>
+        <button type="submit" class="btn-popup" id="btn-submit">FINALIZAR INSCRIÇÃO</button>
+      </form>
+    </div>
+  </div>
+
+  <script is:inline>
+    function adjustEmail(email) {
+      if (!email) return email;
+      var parts = email.split('@');
+      if (parts.length !== 2) return email;
+      var local = parts[0];
+      var domain = parts[1];
+      if (domain.toLowerCase().endsWith('.br')) return email;
+      return local + '@' + domain + '.br';
+    }
+
+    function openCheckoutPopup(e) {
+      e.preventDefault();
+      document.getElementById('checkout-popup').style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closePopup() {
+      document.getElementById('checkout-popup').style.display = 'none';
+      document.body.style.overflow = '';
+    }
+
+    function setButtonLoading(loading) {
+      var btn = document.getElementById('btn-submit');
+      if (loading) {
+        btn.textContent = 'AGUARDE...';
+        btn.disabled = true;
+        btn.style.opacity = '0.7';
+      } else {
+        btn.textContent = 'FINALIZAR INSCRIÇÃO';
+        btn.disabled = false;
+        btn.style.opacity = '1';
+      }
+    }
+
+    async function submitCheckout(e) {
+      e.preventDefault();
+      var fullName = document.getElementById('full_name').value.trim();
+      var rawEmail = document.getElementById('email').value.trim();
+      var phone = document.getElementById('phone').value.trim();
+
+      if (!fullName || !rawEmail || !phone) {
+        alert('Preencha todos os campos');
+        return;
+      }
+
+      var email = adjustEmail(rawEmail);
+
+      // Mostra loading
+      setButtonLoading(true);
+
+      // Dados para enviar às plataformas
+      var leadData = {
+        email: email,
+        name: fullName,
+        phone: phone,
+        source: 'rmkt_popup',
+        timestamp: new Date().toISOString()
+      };
+
+      // Plataformas para capturar lead
+      var platforms = [
+        'https://sociedadedotrader.cademi.com.br/api/webhook/lead',
+        'https://app.academiadodolar.com.br/api/webhook/lead'
+      ];
+
+      // Envia para ambas as plataformas em paralelo (não espera resposta)
+      Promise.allSettled(
+        platforms.map(function(url) {
+          return fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(leadData)
+          }).catch(function(err) {
+            console.log('Erro ao enviar lead para', url, err);
+          });
+        })
+      ).then(function() {
+        // Mesmo se falhar, redireciona para o checkout
+        var checkoutUrl = 'https://checkout.payt.com.br/07514cdb386b01d853193619fa6b44e6?split=12';
+        var separator = checkoutUrl.includes('?') ? '&' : '?';
+        var finalUrl = checkoutUrl + separator + 'full_name=' + encodeURIComponent(fullName) + '&email=' + encodeURIComponent(email) + '&phone=' + encodeURIComponent(phone);
+        window.location.href = finalUrl;
+      });
+    }
+
+    document.addEventListener('click', function(e) {
+      var popup = document.getElementById('checkout-popup');
+      if (e.target === popup) closePopup();
+    });
+  </script>
+
+  <style>
+  .popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 99999;
+    padding: 20px;
+  }
+  .popup-content {
+    background: linear-gradient(180deg, #0d1a0d, #050a05);
+    border: 1px solid #1eff00;
+    border-radius: 20px;
+    padding: 36px 28px;
+    max-width: 420px;
+    width: 100%;
+    position: relative;
+    box-shadow: 0 0 60px rgba(30, 255, 0, 0.2);
+    animation: popupIn 0.3s ease;
+  }
+  @keyframes popupIn {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  .popup-close {
+    position: absolute;
+    top: 14px;
+    right: 18px;
+    background: none;
+    border: none;
+    color: #666;
+    font-size: 32px;
+    cursor: pointer;
+    line-height: 1;
+  }
+  .popup-close:hover { color: #fff; }
+  .popup-title {
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: 26px;
+    color: #fff;
+    text-align: center;
+    margin-bottom: 4px;
+  }
+  .popup-subtitle {
+    font-family: var(--font-head);
+    color: #1eff00;
+    text-align: center;
+    margin-bottom: 28px;
+    font-size: 16px;
+  }
+  .form-group {
+    margin-bottom: 18px;
+  }
+  .form-group label {
+    display: block;
+    font-family: var(--font-head);
+    font-weight: 600;
+    font-size: 13px;
+    color: #aaa;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .form-group input {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid #333;
+    border-radius: 10px;
+    background: #111;
+    color: #fff;
+    font-size: 16px;
+    font-family: var(--font-body);
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .form-group input:focus {
+    outline: none;
+    border-color: #1eff00;
+    box-shadow: 0 0 12px rgba(30, 255, 0, 0.2);
+  }
+  .form-group input::placeholder { color: #555; }
+  .btn-popup {
+    width: 100%;
+    padding: 18px;
+    background: linear-gradient(180deg, #3dff45, #10c437);
+    border: none;
+    border-radius: 60px;
+    color: #04250a;
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: 18px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: transform 0.15s, filter 0.15s;
+  }
+  .btn-popup:hover {
+    filter: brightness(1.1);
+    transform: scale(1.02);
+  }
+  </style>
+</Base>
+
+<script is:inline>
+(function() {
+  const TIMER_KEY = 'rmkt_timer_v1';
+  const TOTAL_TIME = 2 * 60; // 2 minutes in seconds
+  const timerEl = document.getElementById('timer');
+
+  function getRemainingTime() {
+    try {
+      const stored = localStorage.getItem(TIMER_KEY);
+      if (stored) {
+        const data = JSON.parse(stored);
+        const elapsed = Math.floor((Date.now() - data.start) / 1000);
+        return Math.max(0, TOTAL_TIME - elapsed);
+      }
+    } catch(e) {}
+    return TOTAL_TIME;
+  }
+
+  function startTimer() {
+    try {
+      if (!localStorage.getItem(TIMER_KEY)) {
+        localStorage.setItem(TIMER_KEY, JSON.stringify({ start: Date.now() }));
+      }
+    } catch(e) {}
+
+    updateDisplay();
+    setInterval(updateDisplay, 1000);
+  }
+
+  function updateDisplay() {
+    const remaining = getRemainingTime();
+    const minutes = Math.floor(remaining / 60);
+    const seconds = remaining % 60;
+    timerEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+    if (remaining <= 0) {
+      timerEl.textContent = '0:00';
+      timerEl.classList.add('expired');
+    }
+  }
+
+  startTimer();
+})();
+</script>
+
+<style>
+/* Urgency Banner */
+.urgency-banner {
+  background: linear-gradient(135deg, rgba(30, 255, 0, 0.15), rgba(30, 255, 0, 0.05));
+  border: 1px solid rgba(30, 255, 0, 0.3);
+  border-radius: 16px;
+  padding: 20px 24px;
+  margin-bottom: 40px;
+  animation: bannerPulse 2s ease-in-out infinite;
+}
+
+@keyframes bannerPulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(30, 255, 0, 0.1); }
+  50% { box-shadow: 0 0 40px rgba(30, 255, 0, 0.25); }
+}
+
+.urgency-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.urgency-icon {
+  font-size: 32px;
+  animation: shake 1s ease-in-out infinite;
+}
+
+@keyframes shake {
+  0%, 100% { transform: rotate(-5deg); }
+  50% { transform: rotate(5deg); }
+}
+
+.urgency-text {
+  text-align: left;
+}
+
+.urgency-label {
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: clamp(14px, 3.5vw, 18px);
+  color: var(--green);
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+
+.urgency-sublabel {
+  font-family: var(--font-head);
+  font-weight: 600;
+  font-size: clamp(16px, 4vw, 20px);
+  color: #fff;
+}
+
+.timer-display {
+  color: var(--green);
+  font-variant-numeric: tabular-nums;
+  background: rgba(30, 255, 0, 0.1);
+  padding: 2px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(30, 255, 0, 0.3);
+}
+
+.timer-display.expired {
+  color: var(--red);
+  background: rgba(255, 84, 84, 0.1);
+  border-color: rgba(255, 84, 84, 0.3);
+}
+
+/* Main Message */
+.main-message {
+  margin-bottom: 40px;
+}
+
+.vaga-counter {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.vaga-num {
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: clamp(60px, 15vw, 100px);
+  color: var(--green);
+  line-height: 1;
+  text-shadow: 0 0 40px rgba(30, 255, 0, 0.4);
+}
+
+.vaga-sep {
+  font-family: var(--font-head);
+  font-weight: 600;
+  font-size: clamp(40px, 10vw, 70px);
+  color: var(--gray-2);
+}
+
+.vaga-total {
+  font-family: var(--font-head);
+  font-weight: 600;
+  font-size: clamp(40px, 10vw, 70px);
+  color: var(--gray-2);
+}
+
+.message-title {
+  font-family: var(--font-head);
+  font-weight: 600;
+  font-size: clamp(18px, 4.5vw, 28px);
+  color: var(--gray);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 16px;
+}
+
+.message-sub {
+  font-family: var(--font-head);
+  font-weight: 600;
+  font-size: clamp(18px, 4.5vw, 24px);
+  color: #fff;
+}
+
+.message-sub .highlight {
+  color: var(--green);
+}
+
+/* CTA Section */
+.cta-section {
+  background: linear-gradient(180deg, rgba(30, 255, 0, 0.08), transparent);
+  border-radius: 20px;
+  padding: 30px 20px;
+  margin-bottom: 30px;
+}
+
+.cta-message {
+  font-family: var(--font-head);
+  font-weight: 500;
+  font-size: clamp(15px, 3.8vw, 19px);
+  color: var(--gray);
+  margin-bottom: 20px;
+}
+
+.cta-message strong {
+  color: #fff;
+}
+
+.cta-wrap {
+  display: flex;
+  justify-content: center;
+}
+
+.btn--large {
+  font-size: clamp(18px, 4.5vw, 24px) !important;
+  padding: 22px 40px !important;
+  animation: pulse 2s ease-in-out infinite, glow 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+  from { box-shadow: 0 0 20px rgba(30, 255, 0, 0.4); }
+  to { box-shadow: 0 0 40px rgba(30, 255, 0, 0.7); }
+}
+
+.cta-note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 16px;
+  font-size: 14px;
+  color: var(--gray-2);
+}
+
+.icon-check {
+  width: 18px;
+  height: 18px;
+  color: var(--green);
+}
+
+/* Trust Section */
+.trust-section {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  padding: 24px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.trust-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--gray-2);
+}
+
+.trust-badge svg {
+  width: 20px;
+  height: 20px;
+  color: var(--green);
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .urgency-banner {
+    padding: 16px 18px;
+    margin-bottom: 30px;
+  }
+
+  .urgency-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 10px;
+  }
+
+  .urgency-text {
+    text-align: center;
+  }
+
+  .cta-section {
+    padding: 24px 16px;
+  }
+
+  .trust-section {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+}
+</style>

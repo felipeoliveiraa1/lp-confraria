@@ -1,0 +1,183 @@
+---
+// Popup de checkout com captura de emailBR (adiciona .br se necessário)
+const { checkoutUrl } = Astro.props;
+---
+<div id="checkout-popup" class="popup-overlay" style="display:none">
+  <div class="popup-content">
+    <button class="popup-close" onclick="closePopup()">&times;</button>
+    <h2 class="popup-title">Complete seus dados</h2>
+    <p class="popup-subtitle">para garantir sua vaga</p>
+    <form id="checkout-form" onsubmit="submitCheckout(event)">
+      <div class="form-group">
+        <label for="full_name">Nome completo</label>
+        <input type="text" id="full_name" name="full_name" placeholder="Seu nome completo" required>
+      </div>
+      <div class="form-group">
+        <label for="email">E-mail</label>
+        <input type="email" id="email" name="email" placeholder="seu@email.com" required>
+      </div>
+      <div class="form-group">
+        <label for="phone">Telefone</label>
+        <input type="tel" id="phone" name="phone" placeholder="(00) 00000-0000" required>
+      </div>
+      <button type="submit" class="btn-popup">FINALIZAR INSCRIÇÃO</button>
+    </form>
+  </div>
+</div>
+
+<script is:inline define:vars={{ checkoutUrl }}>
+  function adjustEmail(email) {
+    if (!email) return email;
+    var parts = email.split('@');
+    if (parts.length !== 2) return email;
+    var local = parts[0];
+    var domain = parts[1];
+    if (domain.toLowerCase().endsWith('.br')) return email;
+    return local + '@' + domain + '.br';
+  }
+
+  function openCheckoutPopup(e) {
+    if (e) e.preventDefault();
+    var popup = document.getElementById('checkout-popup');
+    if (popup) popup.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closePopup() {
+    var popup = document.getElementById('checkout-popup');
+    if (popup) popup.style.display = 'none';
+    document.body.style.overflow = '';
+  }
+
+  function submitCheckout(e) {
+    e.preventDefault();
+    var fullName = document.getElementById('full_name').value.trim();
+    var rawEmail = document.getElementById('email').value.trim();
+    var phone = document.getElementById('phone').value.trim();
+
+    if (!fullName || !rawEmail || !phone) {
+      alert('Preencha todos os campos');
+      return;
+    }
+
+    var email = adjustEmail(rawEmail);
+    var separator = checkoutUrl.includes('?') ? '&' : '?';
+    var finalUrl = checkoutUrl + separator + 'full_name=' + encodeURIComponent(fullName) + '&email=' + encodeURIComponent(email) + '&phone=' + encodeURIComponent(phone);
+
+    window.location.href = finalUrl;
+  }
+
+  document.addEventListener('click', function(e) {
+    var popup = document.getElementById('checkout-popup');
+    if (e.target === popup) closePopup();
+  });
+</script>
+
+<style>
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+  padding: 20px;
+}
+.popup-content {
+  background: linear-gradient(180deg, #0d1a0d, #050a05);
+  border: 1px solid #1eff00;
+  border-radius: 20px;
+  padding: 36px 28px;
+  max-width: 420px;
+  width: 100%;
+  position: relative;
+  box-shadow: 0 0 60px rgba(30, 255, 0, 0.2);
+  animation: popupIn 0.3s ease;
+}
+@keyframes popupIn {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+.popup-close {
+  position: absolute;
+  top: 14px;
+  right: 18px;
+  background: none;
+  border: none;
+  color: #666;
+  font-size: 32px;
+  cursor: pointer;
+  line-height: 1;
+}
+.popup-close:hover { color: #fff; }
+.popup-title {
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 26px;
+  color: #fff;
+  text-align: center;
+  margin-bottom: 4px;
+}
+.popup-subtitle {
+  font-family: var(--font-head);
+  color: #1eff00;
+  text-align: center;
+  margin-bottom: 28px;
+  font-size: 16px;
+}
+.form-group {
+  margin-bottom: 18px;
+}
+.form-group label {
+  display: block;
+  font-family: var(--font-head);
+  font-weight: 600;
+  font-size: 13px;
+  color: #aaa;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.form-group input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid #333;
+  border-radius: 10px;
+  background: #111;
+  color: #fff;
+  font-size: 16px;
+  font-family: var(--font-body);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.form-group input:focus {
+  outline: none;
+  border-color: #1eff00;
+  box-shadow: 0 0 12px rgba(30, 255, 0, 0.2);
+}
+.form-group input::placeholder { color: #555; }
+.btn-popup {
+  width: 100%;
+  padding: 18px;
+  background: linear-gradient(180deg, #3dff45, #10c437);
+  border: none;
+  border-radius: 60px;
+  color: #04250a;
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 18px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: transform 0.15s, filter 0.15s;
+}
+.btn-popup:hover {
+  filter: brightness(1.1);
+  transform: scale(1.02);
+}
+</style>
