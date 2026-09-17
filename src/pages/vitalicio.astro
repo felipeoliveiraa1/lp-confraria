@@ -10,15 +10,9 @@ const PAYT = 'https://checkout.payt.com.br/multiple-oneclickbuyscript/LJAMP7.js'
   <!-- gate: esconde os botões até o vídeo chegar em 4:30. Roda antes da pintura (sem
        flash); sem JS, nada é escondido (fallback). -->
   <script is:inline>try{if(!localStorage.getItem('al_vitalicio_revealed')&&!/[?&]preview/.test(location.search))document.documentElement.classList.add('gated')}catch(e){document.documentElement.classList.add('gated')}</script>
-  <div class="scarcity">⚠️ IMPORTANTE: ESSA PÁGINA SAIRÁ DO AR EM <span id="cd">15:00</span></div>
   <main class="funnel">
     <div class="funnel-wrap">
-      <h1 class="funnel-title">Sua compra ainda<br />não está completa…</h1>
-      <ul class="steps-card">
-        <li><span class="ic">✅</span> Passo 1: Sociedade do Trader</li>
-        <li class="is-now"><span class="ic">⚙️</span> Passo 2: Configuração blindada</li>
-        <li><span class="ic">⏳</span> Passo 3: Compra concluída!</li>
-      </ul>
+      <h1 class="funnel-title">AULA 01: COMECE AQUI</h1>
       <Vsl playerId="vid-6aab13880bc629bcb0253098" />
       <div class="gate" id="vitalicio-cta">
         <PaytButton object="RK995Z-4O2G6Z" label="QUERO GARANTIR ACESSO VITALICIO" installments />
