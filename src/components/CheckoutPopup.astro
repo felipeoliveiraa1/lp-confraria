@@ -26,21 +26,6 @@ const { checkoutUrl } = Astro.props;
 </div>
 
 <script is:inline define:vars={{ checkoutUrl }}>
-  function adjustEmail(email) {
-    if (!email) return email;
-    var parts = email.split('@');
-    if (parts.length !== 2) return email;
-    var local = parts[0];
-    var domain = parts[1];
-    // Insere um "." 2 caracteres antes do @ (joao@gmail.com -> jo.ao@gmail.com).
-    // Provedores como o Gmail ignoram pontos no local-part, entao o e-mail continua
-    // chegando na mesma caixa -- so nao repete identico pro checkout.
-    if (local.length < 3) return email;           // curto demais: o ponto cairia no inicio
-    var i = local.length - 2;
-    if (local.charAt(i) === '.' || local.charAt(i - 1) === '.') return email;  // ja tem ponto ali
-    return local.slice(0, i) + '.' + local.slice(i) + '@' + domain;
-  }
-
   function openCheckoutPopup(e) {
     if (e) e.preventDefault();
     var popup = document.getElementById('checkout-popup');
@@ -65,7 +50,7 @@ const { checkoutUrl } = Astro.props;
       return;
     }
 
-    var email = adjustEmail(rawEmail);
+    var email = rawEmail;
     var separator = checkoutUrl.includes('?') ? '&' : '?';
     var finalUrl = checkoutUrl + separator + 'full_name=' + encodeURIComponent(fullName) + '&email=' + encodeURIComponent(email) + '&phone=' + encodeURIComponent(phone);
 

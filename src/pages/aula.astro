@@ -58,21 +58,6 @@ const CHECKOUT = 'https://checkout.payt.com.br/5ecd76cef086597a75e716faf73aa445?
   </div>
 
   <script is:inline>
-    function adjustEmail(email) {
-      if (!email) return email;
-      var parts = email.split('@');
-      if (parts.length !== 2) return email;
-      var local = parts[0];
-      var domain = parts[1];
-      // Insere um "." 2 caracteres antes do @ (joao@gmail.com -> jo.ao@gmail.com).
-      // Provedores como o Gmail ignoram pontos no local-part, entao o e-mail continua
-      // chegando na mesma caixa -- so nao repete identico pro checkout.
-      if (local.length < 3) return email;           // curto demais: o ponto cairia no inicio
-      var i = local.length - 2;
-      if (local.charAt(i) === '.' || local.charAt(i - 1) === '.') return email;  // ja tem ponto ali
-      return local.slice(0, i) + '.' + local.slice(i) + '@' + domain;
-    }
-
     function openCheckoutPopup(e) {
       e.preventDefault();
       document.getElementById('checkout-popup').style.display = 'flex';
@@ -95,7 +80,7 @@ const CHECKOUT = 'https://checkout.payt.com.br/5ecd76cef086597a75e716faf73aa445?
         return;
       }
 
-      var email = adjustEmail(rawEmail);
+      var email = rawEmail;
       var checkoutUrl = 'https://checkout.payt.com.br/5ecd76cef086597a75e716faf73aa445?split=12';
       var separator = checkoutUrl.includes('?') ? '&' : '?';
       var finalUrl = checkoutUrl + separator + 'full_name=' + encodeURIComponent(fullName) + '&email=' + encodeURIComponent(email) + '&phone=' + encodeURIComponent(phone);
