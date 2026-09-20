@@ -99,26 +99,21 @@ const faq = [
 <Base>
   <!-- gate: esconde botão da hero + tudo abaixo até o play completar 13:55.
        Roda antes da pintura (sem flash). Sem JS / com ?preview, nada é escondido. -->
-  <script is:inline>try{if(!localStorage.getItem('al_vsl_revealed')&&!/[?&]preview/.test(location.search))document.documentElement.classList.add('gated')}catch(e){document.documentElement.classList.add('gated')}</script>
+  <script is:inline>try{if(!localStorage.getItem('al_home_v2')&&!/[?&]preview/.test(location.search))document.documentElement.classList.add('gated')}catch(e){document.documentElement.classList.add('gated')}</script>
 
   <!-- ============ HERO ============ -->
   <header class="hero" style={`background-image:url(${img.heroBg})`}>
     <div class="wrap--narrow">
-      <h1 class="hero-title">
-        O <u class="ul">Passo a Passo</u> Que Brasileiros Comuns Estão Usando Pra
-        <span class="green">Lucrar R$550 Por Dia</span> No Mercado Mais Lucrativo Do Mundo
-      </h1>
-      <p class="hero-sub">Nada de investir, <strong>nada de aparecer e nada de day trade!</strong></p>
-
+      <!-- headline e sub removidas a pedido: a dobra abre direto no vídeo. -->
       <!-- ===== VSL — player nativo do vturb (carrega no load = play-rate real) ===== -->
       <div class="vsl-slot" id="vsl">
-        <img class="vsl-poster" src="/assets/vsl-cover-home.webp" alt="" fetchpriority="high" decoding="async" width="460" height="818" />
-        <vturb-smartplayer id="vid-6a3d1ec9ac7ae1f31843b4c4" style="display:block;width:100%;height:100%"></vturb-smartplayer>
+        <img class="vsl-poster" src="/assets/vsl-cover-aberta.webp" alt="" fetchpriority="high" decoding="async" width="404" height="720" />
+        <vturb-smartplayer id="vid-6aa31e01434c2f17aeac691a" style="display:block;width:100%;height:100%"></vturb-smartplayer>
       </div>
       <script is:inline>
         /* adia o player p/ logo após o 1º paint (fora da janela do LCP): no máx 2s (requestIdleCallback)
            ou na 1ª interação. Ainda carrega p/ todos que ficam >~1s = play-rate real preservado. */
-        (function(){var SRC='https://scripts.converteai.net/d9544c5d-ba21-4c7b-aa65-b6663bf5494d/players/6a3d1ec9ac7ae1f31843b4c4/v4/player.js',done=false;function load(){if(done)return;done=true;var s=document.createElement('script');s.src=SRC;s.async=true;document.head.appendChild(s);}if('requestIdleCallback' in window){requestIdleCallback(load,{timeout:2000});}else{setTimeout(load,1500);}['pointerdown','touchstart','scroll','keydown'].forEach(function(e){addEventListener(e,load,{once:true,passive:true});});})();
+        (function(){var SRC='https://scripts.converteai.net/d9544c5d-ba21-4c7b-aa65-b6663bf5494d/players/6aa31e01434c2f17aeac691a/v4/player.js',done=false;function load(){if(done)return;done=true;var s=document.createElement('script');s.src=SRC;s.async=true;document.head.appendChild(s);}if('requestIdleCallback' in window){requestIdleCallback(load,{timeout:2000});}else{setTimeout(load,1500);}['pointerdown','touchstart','scroll','keydown'].forEach(function(e){addEventListener(e,load,{once:true,passive:true});});})();
       </script>
 
       <div class="gate" id="hero-cta">
@@ -514,13 +509,15 @@ const faq = [
   }
   </style>
 
-  <!-- reveal: hero-cta + tudo abaixo aparecem quando o VÍDEO chega em 13:55 (currentTime
-       real do player vturb). ?preview revela na hora (QA). Persiste. Fail-open se o
-       player não carregar (adblock) — não esconde a venda. -->
+  <!-- reveal: hero-cta + tudo abaixo aparecem quando o VÍDEO chega em 18:03 (currentTime
+       real do player vturb) — mesmo pitch da /aberta, que roda esta mesma VSL.
+       Tempo na LINHA DO TEMPO do video (~15:02 no relogio: o player roda em turbo 1.2x).
+       ?preview revela na hora (QA). Persiste. Fail-open se o player não carregar
+       (adblock) — não esconde a venda. -->
   <script is:inline>
     (function () {
-      var PITCH = 13 * 60 + 55; // 13:55 = 835s de vídeo
-      var KEY = 'al_vsl_revealed', iv = null, t0 = Date.now(), saw = false;
+      var PITCH = 18 * 60 + 3; // 18:03 = 1083s de vídeo (~15:02 no cronômetro, turbo 1.2x)
+      var KEY = 'al_home_v2', iv = null, t0 = Date.now(), saw = false;
       function reveal() {
         document.documentElement.classList.remove('gated');
         try { localStorage.setItem(KEY, '1'); } catch (e) {}
