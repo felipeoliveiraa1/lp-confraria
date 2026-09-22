@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aula Fechada — Método de Operação</title>
+
+<!-- =========================================================================
+  LEIA ANTES DE PUBLICAR
+  1) Troque VSL_REDIRECT_URL (lá embaixo, no <script>) pela URL da sua VSL atual.
+     O quizz repassa automaticamente qualquer parametro de UTM/fbclid da URL
+     de entrada pra URL de destino, então seu tracking do Meta/UTMfy não quebra.
+  2) Se quiser disparar o Pixel do Meta já nesta página (visualização/qualificação
+     do quizz como evento separado da VSL), preencha SEU_PIXEL_ID e descomente
+     o bloco "Meta Pixel" mais abaixo. Se o pixel já dispara na VSL de destino,
+     pode deixar comentado e não fazer nada.
+  3) Troque a foto placeholder (variavel AVATAR_SVG ou troque por uma <img>)
+     pela sua foto real.
+  4) NÃO incluí depoimentos/comentários fabricados (nomes e falas inventadas).
+     Isso é a mesma prática que já foi mapeada como risco no seu material de
+     copy (prova social fabricada = um dos 4 pilares do "black" que já te
+     causou queda de conta). Se quiser prova social aqui, use printscreen
+     real de aluno/comentário real — deixei um bloco comentado indicado
+     como "PROVA_SOCIAL_REAL" pra você inserir isso, ou apague se não tiver.
+  5) Nenhum texto aqui usa "robô", "IA", "automação" ou "forex" — o mecanismo
+     fica oculto até a VSL, igual ao seu padrão já validado.
+  6) Esse quizz já manda os eventos de progressão pro seu SaaS (aba "Quizz"
+     no /admin), em QUIZ_TRACK_URL lá embaixo. Pra isso funcionar, no
+     projeto aulu-saas: rode a migration nova (schema.prisma ganhou o
+     model QuizEvent) com `npx prisma migrate dev --name add_quiz_event`
+     e depois faça o deploy de sempre (`vercel --prod`). Sem isso, o
+     quizz continua funcionando normal pro visitante, só não aparece
+     nada na aba Quizz do admin ainda.
+========================================================================== -->
+
+<style>
+  :root{
+    --bg: #0a0a0a;
+    --bg-soft: #131313;
+    --red: #e8232a;
+    --red-dim: #7a1015;
+    --text: #f2f2f2;
+    --text-dim: #a8a8a8;
+    --border: #262626;
+  }
+  *{ box-sizing: border-box; }
+  html,body{
+    margin:0; padding:0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  body{
+    min-height: 100vh;
+    display:flex;
+    justify-content:center;
+    background:
+      radial-gradient(ellipse at top, rgba(232,35,42,0.14), transparent 60%),
+      var(--bg);
+  }
+  .wrap{
+    width:100%;
+    max-width: 620px;
+    padding: 32px 20px 60px;
+  }
+  .avatar-row{
+    display:flex;
+    justify-content:center;
+    margin-bottom: 18px;
+  }
+  .avatar{
+    width:64px; height:64px;
+    border-radius:50%;
+    border: 2px solid var(--red);
+    display:flex; align-items:center; justify-content:center;
+    background: var(--bg-soft);
+    overflow:hidden;
+  }
+  .avatar svg{ width:34px; height:34px; opacity:.85; }
+  .progress{
+    display:flex;
+    gap:6px;
+    max-width: 220px;
+    margin: 0 auto 22px;
+  }
+  .progress .seg{
+    height:4px;
+    flex:1;
+    border-radius:2px;
+    background: var(--border);
+    overflow:hidden;
+  }
+  .progress .seg i{
+    display:block;
+    height:100%;
+    width:0%;
+    background: var(--red);
+    transition: width .35s ease;
+  }
+  .pill{
+    display:block;
+    text-align:center;
+    font-size:11px;
+    letter-spacing:.12em;
+    font-weight:700;
+    color: var(--text-dim);
+    text-transform:uppercase;
+    margin-bottom: 14px;
+  }
+  .pill span{
+    background: var(--bg-soft);
+    border:1px solid var(--border);
+    padding:6px 14px;
+    border-radius:999px;
+  }
+  h1{
+    font-size: 22px;
+    line-height:1.35;
+    text-align:center;
+    font-weight:800;
+    margin: 0 0 26px;
+    padding: 0 4px;
+  }
+  .subhead{
+    font-size: 22px;
+    line-height:1.35;
+    text-align:center;
+    font-weight:800;
+    color: var(--text);
+    margin: 0 0 8px;
+    padding: 0 4px;
+  }
+  .btn{
+    display:block;
+    width:100%;
+    border:none;
+    cursor:pointer;
+    padding:16px 20px;
+    border-radius:12px;
+    font-size:16px;
+    font-weight:700;
+    text-align:center;
+    font-family:inherit;
+  }
+  .btn-primary{
+    background: linear-gradient(180deg, #ff3038, var(--red));
+    color:#fff;
+    box-shadow: 0 6px 18px rgba(232,35,42,.35);
+    margin-bottom: 14px;
+  }
+  .btn-primary:active{ transform: translateY(1px); }
+  .btn-secondary{
+    background:transparent;
+    color: var(--text-dim);
+    text-decoration: underline;
+    font-weight:500;
+    font-size:14px;
+    padding:8px;
+  }
+  .step{ display:none; }
+  .step.active{ display:block; animation: fadein .25s ease; }
+  @keyframes fadein{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:none;} }
+
+  /* Tela final */
+  .final-badge{
+    text-align:center;
+    font-size:12px;
+    letter-spacing:.08em;
+    color: var(--red);
+    font-weight:700;
+    text-transform:uppercase;
+    margin-bottom:10px;
+  }
+  .bullets{
+    list-style:none;
+    padding:0; margin: 22px 0 26px;
+    display:flex; flex-direction:column; gap:14px;
+  }
+  .bullets li{
+    display:flex; gap:10px;
+    background: var(--bg-soft);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:14px 16px;
+    font-size:14.5px;
+    line-height:1.5;
+    color: var(--text);
+  }
+  .bullets li .chk{
+    color: var(--red);
+    font-weight:900;
+    flex-shrink:0;
+  }
+  .urgency{
+    text-align:center;
+    font-size:13px;
+    color: var(--text-dim);
+    border-top:1px solid var(--border);
+    padding-top:16px;
+    margin-top: 4px;
+  }
+  .urgency b{ color: var(--text); }
+
+  /* Prova social — blocos de EXEMPLO, pra visualizar layout. Substitua pelo conteúdo real antes de publicar. */
+  .example-tag{
+    display:inline-block;
+    background: var(--red-dim);
+    color:#ffd7d7;
+    font-size:9.5px;
+    font-weight:800;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    padding:2px 7px;
+    border-radius:5px;
+    margin-left:6px;
+    vertical-align:middle;
+  }
+  .comments{
+    margin: 22px 0 6px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+  .comments-head{
+    font-size:12.5px;
+    color: var(--text-dim);
+    margin-bottom: 14px;
+  }
+  .comment{
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+    margin-bottom: 16px;
+  }
+  .comment .pic{
+    width:34px; height:34px;
+    border-radius:50%;
+    background: linear-gradient(135deg, #444, #222);
+    flex-shrink:0;
+  }
+  .comment:nth-of-type(2) .pic{ background: linear-gradient(135deg, #e8232a, #5c0d10); }
+  .comment:nth-of-type(3) .pic{ background: linear-gradient(135deg, #c9963a, #5c4413); }
+  .comment:nth-of-type(4) .pic{ background: linear-gradient(135deg, #4a90d9, #17324f); }
+  .comment:nth-of-type(5) .pic{ background: linear-gradient(135deg, #7a4ad9, #2c1a52); }
+  .comment:nth-of-type(6) .pic{ background: linear-gradient(135deg, #3ac97a, #114a2c); }
+  .comment:nth-of-type(7) .pic{ background: linear-gradient(135deg, #d94a9e, #4a1734); }
+  .comment .body{ font-size:13.5px; line-height:1.5; flex:1; min-width:0; }
+  .comment .name{ font-weight:700; margin-right:4px; }
+  .comment .meta{ font-size:11.5px; color: var(--text-dim); margin-top:5px; display:flex; align-items:center; gap:6px; }
+  .comment .meta .dot{ opacity:.6; }
+
+  .pic-you{
+    display:flex; align-items:center; justify-content:center;
+    background: linear-gradient(135deg, #ff3038, var(--red)) !important;
+    color:#fff; font-weight:800; font-size:14px;
+  }
+
+  /* Curtida ao lado do comentário (estilo Instagram), não embaixo */
+  .like-btn{
+    background:none; border:none; cursor:pointer;
+    color: var(--text-dim); font-size:11px;
+    display:flex; flex-direction:column; align-items:center; gap:3px;
+    padding:2px 0 0; font-family:inherit;
+    flex-shrink:0;
+    width:28px;
+  }
+  .like-btn .icon{ font-size:15px; line-height:1; }
+  .like-btn.liked{ color: var(--red); font-weight:700; }
+
+  .reply-link{
+    background:none; border:none; cursor:pointer;
+    color: var(--text-dim); font-size:11.5px; font-family:inherit;
+    padding:0; text-decoration:underline;
+  }
+
+  .add-comment-trigger{
+    display:inline-block;
+    background:none; border:none; cursor:pointer;
+    color: var(--red); font-size:12.5px; font-weight:700;
+    font-family:inherit; padding:0; margin-bottom:14px;
+  }
+  .compose{
+    display:none;
+    gap:10px;
+    margin-bottom: 18px;
+  }
+  .compose.open{ display:flex; }
+  .compose textarea{
+    flex:1;
+    background: var(--bg-soft);
+    border:1px solid var(--border);
+    border-radius:10px;
+    color: var(--text);
+    font-family:inherit;
+    font-size:13.5px;
+    padding:10px 12px;
+    resize:none;
+    min-height:40px;
+  }
+  .compose button{
+    background: var(--red);
+    color:#fff; border:none; border-radius:10px;
+    padding:0 16px; font-weight:700; font-size:13px;
+    cursor:pointer; font-family:inherit;
+  }
+  /* Caixinha de resposta abre logo abaixo do comentário clicado, não no topo */
+  .reply-box{ margin-left:44px; margin-bottom:16px; }
+  .reply-item{ margin-left:44px; }
+
+  .real-proof{
+    background:#12241c;
+    border:1px solid #1f3d2f;
+    border-radius:12px;
+    padding:14px 16px;
+    margin: 20px 0;
+  }
+  .real-proof .rp-head{
+    font-size:11px;
+    color:#8fd1a8;
+    text-transform:uppercase;
+    letter-spacing:.08em;
+    font-weight:700;
+    margin-bottom:8px;
+  }
+  .real-proof .rp-name{ font-size:13px; color:#c9e8d3; margin-bottom:6px; font-weight:600; }
+  .real-proof .rp-text{ font-size:14px; line-height:1.55; }
+  .real-proof .rp-time{ font-size:11px; color:#7fae8e; margin-top:8px; text-align:right; }
+
+  footer{
+    margin-top: 36px;
+    text-align:center;
+  }
+  footer .links{
+    font-size:12px;
+    color: var(--text-dim);
+    margin-bottom:14px;
+  }
+  footer .links a{ color: var(--text-dim); }
+  footer .disclaimer{
+    font-size:11px;
+    line-height:1.6;
+    color:#6b6b6b;
+    max-width: 520px;
+    margin: 0 auto;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="avatar-row">
+    <div class="avatar" id="avatar">
+      <!-- Troque este SVG por <img src="sua-foto.jpg" style="width:100%;height:100%;object-fit:cover"> -->
+      <svg viewBox="0 0 24 24" fill="none" stroke="#e8232a" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+    </div>
+  </div>
+
+  <div class="progress" id="progress">
+    <div class="seg"><i id="seg1"></i></div>
+    <div class="seg"><i id="seg2"></i></div>
+    <div class="seg"><i id="seg3"></i></div>
+    <div class="seg"><i id="seg4"></i></div>
+  </div>
+
+  <!-- STEP 1 -->
+  <div class="step active" data-step="1">
+    <div class="pill"><span>🔒 Aula Privada</span></div>
+    <h1>Essa aula é exclusiva para quem já tentou ter uma renda extra na internet pelo celular, mas nunca soube por onde começar. É o seu caso?</h1>
+    <button class="btn btn-primary" onclick="next(1, this)">Sim, é o meu caso</button>
+    <button class="btn btn-secondary" onclick="next(1, this)">Não, já sei por onde começar</button>
+
+    <!-- Bloco de EXEMPLO só pra visualizar layout/densidade — trocar TODOS por comentários reais depois -->
+    <div class="comments">
+      <div class="comments-head">💬 <span id="commentCount">7</span> comentários · veja o que estão dizendo <span class="example-tag">exemplo — substituir</span></div>
+
+      <button class="add-comment-trigger" onclick="toggleCompose()">+ Deixar um comentário</button>
+      <div class="compose" id="compose">
+        <textarea id="composeText" placeholder="Escreva um comentário..." rows="1"></textarea>
+        <button onclick="submitComment()">Comentar</button>
+      </div>
+
+      <div id="commentList">
+        <div class="comment">
+          <div class="pic"></div>
+          <div class="body">
+            <span class="name">[Nome 1]</span><div>[comentário real de aluno aqui]</div>
+            <div class="meta">1h <span class="dot">·</span> <button class="reply-link" onclick="toggleReply(this)">Responder</button></div>
+          </div>
+          <button class="like-btn" data-count="12" onclick="toggleLike(this)"><span class="icon">🤍</span><span class="n">12</span></button>
+        </div>
+        <div class="comment">
+          <div class="pic"></div>
+          <div class="body">
+            <span class="name">[Nome 2]</span><div>[comentário real de aluno aqui]</div>
+            <div class="meta">3h <span class="dot">·</span> <button class="reply-link" onclick="toggleReply(this)">Responder</button></div>
+          </div>
+          <button class="like-btn" data-count="22" onclick="toggleLike(this)"><span class="icon">🤍</span><span class="n">22</span></button>
+        </div>
+        <div class="comment">
+          <div class="pic"></div>
+          <div class="body">
+            <span class="name">[Nome 3]</span><div>[comentário real de aluno aqui]</div>
+            <div class="meta">4h <span class="dot">·</span> <button class="reply-link" onclick="toggleReply(this)">Responder</button></div>
+          </div>
+          <button class="like-btn" data-count="6" onclick="toggleLike(this)"><span class="icon">🤍</span><span class="n">6</span></button>
+        </div>
+        <div class="comment">
+          <div class="pic"></div>
+          <div class="body">
+            <span class="name">[Nome 4]</span><div>[comentário real de aluno aqui]</div>
+            <div class="meta">6h <span class="dot">·</span> <button class="reply-link" onclick="toggleReply(this)">Responder</button></div>
+          </div>
+          <button class="like-btn" data-count="31" onclick="toggleLike(this)"><span class="icon">🤍</span><span class="n">31</span></button>
+        </div>
+        <div class="comment">
+          <div class="pic"></div>
+          <div class="body">
+            <span class="name">[Nome 5]</span><div>[comentário real de aluno aqui]</div>
+            <div class="meta">8h <span class="dot">·</span> <button class="reply-link" onclick="toggleReply(this)">Responder</button></div>
+          </div>
+          <button class="like-btn" data-count="5" onclick="toggleLike(this)"><span class="icon">🤍</span><span class="n">5</span></button>
+        </div>
+        <div class="comment">
+          <div class="pic"></div>
+          <div class="body">
+            <span class="name">[Nome 6]</span><div>[comentário real de aluno aqui]</div>
+            <div class="meta">9h <span class="dot">·</span> <button class="reply-link" onclick="toggleReply(this)">Responder</button></div>
+          </div>
+          <button class="like-btn" data-count="9" onclick="toggleLike(this)"><span class="icon">🤍</span><span class="n">9</span></button>
+        </div>
+        <div class="comment">
+          <div class="pic"></div>
+          <div class="body">
+            <span class="name">[Nome 7]</span><div>[comentário real de aluno aqui]</div>
+            <div class="meta">11h <span class="dot">·</span> <button class="reply-link" onclick="toggleReply(this)">Responder</button></div>
+          </div>
+          <button class="like-btn" data-count="2" onclick="toggleLike(this)"><span class="icon">🤍</span><span class="n">2</span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="step" data-step="2">
+    <div class="pill"><span>Pergunta 2 de 4</span></div>
+    <h1>Hoje sua renda depende inteiramente do seu tempo, ou já existe alguma parte dela que entra sem você precisar estar trabalhando naquele momento?</h1>
+    <button class="btn btn-primary" onclick="next(2, this)">Depende inteiramente do meu tempo</button>
+    <button class="btn btn-secondary" onclick="next(2, this)">Já tenho uma parte que não depende disso</button>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="step" data-step="3">
+    <div class="pill"><span>Pergunta 3 de 4</span></div>
+    <h1>Você topa ver como é possível ter uma renda extra ainda essa semana, sem precisar nem estudar anos pra isso?</h1>
+    <button class="btn btn-primary" onclick="next(3, this)">Quero ver como funciona</button>
+    <button class="btn btn-secondary" onclick="next(3, this)">Prefiro continuar do jeito que tá</button>
+  </div>
+
+  <!-- STEP 4 -->
+  <div class="step" data-step="4">
+    <div class="pill"><span>Última pergunta</span></div>
+    <h1>Você se compromete a assistir essa aula até o final e me mandar uma opinião sincera depois?</h1>
+    <button class="btn btn-primary" onclick="next(4, this)">Eu me comprometo</button>
+    <button class="btn btn-secondary" onclick="next(4, this)">Vou só dar uma olhada rápida</button>
+  </div>
+
+  <!-- STEP 5 (final) -->
+  <div class="step" data-step="5">
+    <div class="final-badge">Aula liberada</div>
+    <h1>Nessa aula gratuita você vai entender:</h1>
+    <ul class="bullets">
+      <li><span class="chk">✓</span> Por que a maioria das pessoas nunca chega a ter uma renda que não dependa só do seu tempo — mesmo trabalhando duro.</li>
+      <li><span class="chk">✓</span> O motivo pelo qual tentar sozinho, sem direção, quase sempre trava antes de sair do lugar — não importa o quanto você se esforce.</li>
+      <li><span class="chk">✓</span> Como é possível ter uma fonte de renda extra sem precisar estudar anos ou ficar horas na frente da tela.</li>
+      <li><span class="chk">✓</span> Por que a maioria de quem tenta começar sozinho desiste nos primeiros meses — e o que muda isso.</li>
+    </ul>
+
+    <!-- Bloco de EXEMPLO só pra visualizar layout — trocar por depoimento real depois -->
+    <div class="real-proof">
+      <div class="rp-head">Mensagem de aluno <span class="example-tag">exemplo — substituir</span></div>
+      <div class="rp-name">Nome do Aluno</div>
+      <div class="rp-text">[cole aqui uma mensagem real de aluno, do jeito que ele mandou]</div>
+      <div class="rp-time">14:32 ✓✓</div>
+    </div>
+
+    <button class="btn btn-primary" id="ctaFinal" onclick="goToVSL()">Assistir agora</button>
+    <div class="urgency">Acesso gratuito por tempo limitado — disponível até <b id="dataLimite"></b>.</div>
+  </div>
+
+  <footer>
+    <div class="links">
+      <a href="#">Política de Privacidade</a> · <a href="#">Termos de Uso</a> · <a href="#">Contato</a>
+    </div>
+    <div class="disclaimer">
+      Este conteúdo tem caráter educacional e não constitui recomendação de investimento, consultoria financeira ou promessa de resultado. Operar no mercado financeiro envolve risco, inclusive de perda de capital. Resultados anteriores não garantem resultados futuros. Este site não é afiliado a Meta, Instagram, Facebook, Google ou TikTok.
+    </div>
+  </footer>
+</div>
+
+<!-- Meta Pixel (opcional — deixe comentado se o pixel já dispara na VSL de destino)
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', 'SEU_PIXEL_ID');
+fbq('track', 'PageView');
+</script>
+-->
+
+<script>
+  // ======= CONFIGURAÇÃO — edite antes de publicar =======
+  const VSL_REDIRECT_URL = "/";   // raiz do proprio dominio = a LP completa (mesma VSL/gate/checkout da /aberta)
+
+  // Endpoint do painel de admin do seu SaaS que registra a progressão do
+  // quizz (aba "Quizz" em /admin). Troque só se o domínio do seu SaaS mudar.
+  const QUIZ_TRACK_URL = "https://app.academiadodolar.com.br/api/quiz/track";
+  const QUIZ_SLUG = "aulu-renda-extra"; // dá pra rodar mais de uma variação de quizz trocando isso
+  // =======================================================
+
+  let current = 1;
+
+  // Um id por visita (não precisa de login nem de cookie) — só pra não
+  // contar a mesma pessoa duas vezes na mesma etapa.
+  const quizSessionId = Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
+  const quizUrlParams = new URLSearchParams(window.location.search);
+  const quizUtmSource = quizUrlParams.get('utm_source') || null;
+  const quizUtmCampaign = quizUrlParams.get('utm_campaign') || null;
+
+  function trackQuiz(step, answer){
+    try {
+      const payload = JSON.stringify({
+        quiz_slug: QUIZ_SLUG,
+        session_id: quizSessionId,
+        step: step,
+        answer: answer || null,
+        utm_source: quizUtmSource,
+        utm_campaign: quizUtmCampaign
+      });
+      // text/plain evita preflight de CORS no sendBeacon; o servidor lê como JSON mesmo assim.
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon(QUIZ_TRACK_URL, new Blob([payload], { type: 'text/plain' }));
+      } else {
+        fetch(QUIZ_TRACK_URL, { method: 'POST', headers: {'Content-Type':'text/plain'}, body: payload, keepalive: true });
+      }
+    } catch (e) {
+      // tracking nunca pode travar o quizz pro visitante
+    }
+  }
+
+  function setProgress(step){
+    for (let i = 1; i <= 4; i++){
+      const seg = document.getElementById('seg' + i);
+      seg.style.width = (i <= step ? 100 : 0) + '%';
+    }
+  }
+
+  function next(fromStep, btnEl){
+    const answer = btnEl ? btnEl.textContent.trim() : null;
+    trackQuiz(fromStep + 1, answer); // registra que chegou na próxima etapa (ou na tela final)
+    // fbq('trackCustom', 'QuizQ' + fromStep); // opcional: descomente pra também mandar pro Pixel
+
+    document.querySelector('.step[data-step="' + fromStep + '"]').classList.remove('active');
+    const nextStep = fromStep + 1;
+    document.querySelector('.step[data-step="' + nextStep + '"]').classList.add('active');
+    setProgress(fromStep);
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  function goToVSL(){
+    trackQuiz(6, 'Assistir agora'); // lead converteu: foi pra VSL
+    // fbq('trackCustom', 'QuizComplete'); // opcional
+    const params = window.location.search; // repassa utm_source, fbclid, etc.
+    window.location.href = VSL_REDIRECT_URL + params;
+  }
+
+  // Marca que essa visita chegou na pergunta 1 assim que a página carrega
+  trackQuiz(1, null);
+
+  // ---- Curtir comentário (ícone fica ao lado do comentário, não embaixo) ----
+  function toggleLike(btn){
+    const base = parseInt(btn.dataset.count, 10);
+    const liked = btn.classList.toggle('liked');
+    btn.querySelector('.n').textContent = liked ? base + 1 : base;
+    btn.querySelector('.icon').textContent = liked ? '❤️' : '🤍';
+  }
+
+  function bumpCommentCount(){
+    const countEl = document.getElementById('commentCount');
+    countEl.textContent = parseInt(countEl.textContent, 10) + 1;
+  }
+
+  function buildCommentNode(name, text, indent){
+    const item = document.createElement('div');
+    item.className = 'comment' + (indent ? ' reply-item' : '');
+    item.innerHTML =
+      '<div class="pic pic-you">V</div>' +
+      '<div class="body">' +
+        '<span class="name">' + name + '</span><div class="ctext"></div>' +
+        '<div class="meta">agora <span class="dot">·</span> <button class="reply-link" onclick="toggleReply(this)">Responder</button></div>' +
+      '</div>' +
+      '<button class="like-btn" data-count="0" onclick="toggleLike(this)"><span class="icon">🤍</span><span class="n">0</span></button>';
+    item.querySelector('.ctext').textContent = text; // evita injeção de HTML
+    return item;
+  }
+
+  // ---- Caixinha do "+ Deixar um comentário" (topo, comentário novo) ----
+  function toggleCompose(){
+    const box = document.getElementById('compose');
+    box.classList.add('open');
+    document.getElementById('composeText').focus();
+  }
+
+  function submitComment(){
+    const textarea = document.getElementById('composeText');
+    const text = textarea.value.trim();
+    if (!text) return;
+
+    const list = document.getElementById('commentList');
+    list.insertBefore(buildCommentNode('Você', text, false), list.firstChild);
+    bumpCommentCount();
+
+    textarea.value = '';
+    document.getElementById('compose').classList.remove('open');
+  }
+
+  // ---- Responder um comentário específico: caixinha abre logo abaixo DELE ----
+  function toggleReply(linkOrBtn){
+    const comment = linkOrBtn.closest('.comment');
+    let box = comment.nextElementSibling;
+    if (!box || !box.classList.contains('reply-box')){
+      box = document.createElement('div');
+      box.className = 'compose reply-box';
+      box.innerHTML =
+        '<textarea placeholder="Escreva uma resposta..." rows="1"></textarea>' +
+        '<button>Responder</button>';
+      box.querySelector('button').onclick = function(){
+        const textarea = box.querySelector('textarea');
+        const text = textarea.value.trim();
+        if (!text) return;
+        comment.parentNode.insertBefore(buildCommentNode('Você', text, true), box.nextSibling);
+        bumpCommentCount();
+        textarea.value = '';
+        box.classList.remove('open');
+      };
+      comment.parentNode.insertBefore(box, comment.nextSibling);
+    }
+    box.classList.toggle('open');
+    if (box.classList.contains('open')) box.querySelector('textarea').focus();
+  }
+
+  // Data de urgência: sempre o dia de HOJE no horário de São Paulo,
+  // não no fuso do dispositivo do visitante — atualiza sozinho todo dia.
+  (function(){
+    const formatter = new Intl.DateTimeFormat('pt-BR', {
+      timeZone: 'America/Sao_Paulo',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
+    document.getElementById('dataLimite').textContent = formatter.format(new Date());
+  })();
+</script>
+</body>
+</html>
