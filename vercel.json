@@ -3,10 +3,6 @@
   "framework": "astro",
   "buildCommand": "astro build",
   "outputDirectory": "dist",
-  "redirects": [
-    { "source": "/quizz", "destination": "/aberta", "permanent": false },
-    { "source": "/quizz/", "destination": "/aberta", "permanent": false }
-  ],
   "headers": [
     {
       "source": "/assets/(.*)",
