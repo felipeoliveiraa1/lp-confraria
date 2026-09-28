@@ -1,6 +1,6 @@
 ---
 import '../styles/global.css';
-const { title = 'AL – BIO – A Sociedade Trader' } = Astro.props;
+const { title = 'AL – BIO – A Sociedade Trader', noindex = false } = Astro.props;
 ---
 <!doctype html>
 <html lang="pt-BR">
@@ -32,7 +32,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <!-- End UTMify -->
 
 <title>{title}</title>
-<meta name="robots" content="max-image-preview:large" />
+<meta name="robots" content={noindex ? 'noindex,nofollow' : 'max-image-preview:large'} />
 <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 
 <!-- vturb optimizer: marca o relógio do player o quanto antes (otimizador oficial) -->
