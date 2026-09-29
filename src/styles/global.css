@@ -115,6 +115,13 @@ a{color:inherit;text-decoration:none}
 /* poster estático (miniatura da VSL) = LCP rápido; o player cobre por cima ao carregar */
 .vsl-poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;z-index:0;pointer-events:none}
 .vsl-slot vturb-smartplayer{display:block;width:100%;height:100%;position:relative;z-index:1}
+/* Slot FLEXIVEL: usado nas paginas onde o vturb renderiza a headline DENTRO do player.
+   O espaco do video e reservado pelo .vturb-player-placeholder (padding 177.78%) que
+   fica dentro do <vturb-smartplayer> — entao nao travamos aspect-ratio aqui e o player
+   cresce p/ caber a headline sem cortar o video.
+   (O shadow root do vturb e CLOSED: nao da p/ inspecionar por dentro.) */
+.vsl-slot--flex{aspect-ratio:auto}
+.vsl-slot--flex vturb-smartplayer{height:auto}
 
 /* "até quando?" — bg-s2 already contains the Nubank phone + faded red text */
 .quando{padding:20px clamp(10px,2.5vw,26px)}

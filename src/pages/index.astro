@@ -106,9 +106,10 @@ const faq = [
     <div class="wrap--narrow">
       <!-- headline e sub removidas a pedido: a dobra abre direto no vídeo. -->
       <!-- ===== VSL — player nativo do vturb (carrega no load = play-rate real) ===== -->
-      <div class="vsl-slot" id="vsl">
-        <img class="vsl-poster" src="/assets/vsl-cover-aberta.webp" alt="" fetchpriority="high" decoding="async" width="404" height="720" />
-        <vturb-smartplayer id="vid-6aa31e01434c2f17aeac691a" style="display:block;width:100%;height:100%"></vturb-smartplayer>
+      <div class="vsl-slot vsl-slot--flex" id="vsl">
+        <vturb-smartplayer id="vid-6aa31e01434c2f17aeac691a" style="display:block;width:100%">
+          <div class="vturb-player-placeholder" style="position:relative;width:100%;padding:177.78% 0 0;background:#05140b"></div>
+        </vturb-smartplayer>
       </div>
       <script is:inline>
         /* adia o player p/ logo após o 1º paint (fora da janela do LCP): no máx 2s (requestIdleCallback)
