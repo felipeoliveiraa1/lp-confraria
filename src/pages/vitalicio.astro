@@ -3,7 +3,9 @@ import Funnel from '../layouts/Funnel.astro';
 import Vsl from '../components/Vsl.astro';
 import PaytButton from '../components/PaytButton.astro';
 // UPSELL 2 — ACESSO VITALÍCIO. Clone do upsell 01 com a VSL e o produto próprios.
-// VSL: vid-6aabe99d (mídia 6aabe957, 5:31, turbo 1.2x) · pitch 04:30
+// VSL: vid-6ac6f865 (mídia 6aabe957, 5:31, turbo 1.2x) · pitch 04:30
+// Player trocado em 07/10 — MESMA midia do anterior (6aabe99d), so o wrapper mudou,
+// entao o pitch de 4:30 nao muda e a chave do gate fica como esta.
 // Troca em 17/09: a midia anterior (6aab12ff) travava na reproducao. Mesmo conteudo
 // e mesma duracao (5:31 vs 5:32), entao o pitch de 4:30 nao muda.
 const PAYT = 'https://checkout.payt.com.br/multiple-oneclickbuyscript/LJAMP7.js';
@@ -15,9 +17,9 @@ const PAYT = 'https://checkout.payt.com.br/multiple-oneclickbuyscript/LJAMP7.js'
   <main class="funnel">
     <div class="funnel-wrap">
       <h1 class="funnel-title">AULA 01: COMECE AQUI</h1>
-      <Vsl playerId="vid-6aabe99d934aa999743a09b5" />
+      <Vsl playerId="vid-6ac6f865648197358d8fc464" />
       <div class="gate" id="vitalicio-cta">
-        <PaytButton object="4N88BE-4O2G6Z" label="ACESSO VITALICIO" installments />
+        <PaytButton object="4N88BE-4O2G6Z" label="QUERO GARANTIR O ACESSO VITALICIO" installments />
         <a class="decline" href="/downsell-payt/">NÃO QUERO ESSA OFERTA</a>
       </div>
     </div>
