@@ -49,6 +49,18 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <link rel="preload" as="font" type="font/woff2" crossorigin href="/assets/InstrumentSans-500.woff2" />
 <!-- above-the-fold LCP = fundo do hero (o slot da VSL é 9/16 sem poster; o player é adiado) -->
 <link rel="preload" as="image" href="/assets/hero-bg.webp" fetchpriority="high" />
+<script is:inline>
+/* Rede de seguranca da headline: nas paginas em que a headline vem do VTURB, a da
+   pagina fica oculta. Se o player NAO carregar (adblock/erro), o placeholder do
+   light DOM continua renderizado (o shadow root nunca foi anexado) -> reexibimos a
+   headline da pagina p/ a dobra nao ficar vazia. */
+(function(){setTimeout(function(){
+  var ph=document.querySelector('.vsl-slot--flex .vturb-player-placeholder');
+  if(ph&&ph.getBoundingClientRect().height>0){
+    document.documentElement.classList.add('vturb-falhou');
+  }
+},8000);})();
+</script>
 </head>
 <body>
 <!-- Google Tag Manager (noscript) -->
